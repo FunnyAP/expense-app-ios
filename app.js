@@ -11,7 +11,7 @@ let incomeCats = [];
 let isVND = false;
 let currentSafeToSpend = 0;
 let currentExchangeRate = 18808; // Mặc định nếu chưa load được
-const btnToggleCurrency = document.getElementById('btn-toggle-currency');
+const currencySwitch = document.getElementById('checkbox-currency');
 
 // Elements
 const overlay = document.getElementById('ui-overlay');
@@ -78,9 +78,19 @@ function updateSafeToSpendUI() {
     }
 }
 
-// Bắt sự kiện bấm nút đổi tiền
-btnToggleCurrency.addEventListener('click', () => {
-    isVND = !isVND;
+// Hàm hiển thị tiền (Chỉ thay đổi con số, không đụng tới nút)
+function updateSafeToSpendUI() {
+    if (isVND) {
+        const vndAmount = currentSafeToSpend * currentExchangeRate;
+        document.getElementById('ui-safe-spend').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(vndAmount);
+    } else {
+        document.getElementById('ui-safe-spend').innerText = formatMoney(currentSafeToSpend);
+    }
+}
+
+// Bắt sự kiện Gạt Toggle (Sáng/Tối)
+currencySwitch.addEventListener('change', (e) => {
+    isVND = e.target.checked; // Nếu gạt sang phải (checked) thì là VND, gạt trái là AUD
     updateSafeToSpendUI();
 });
 

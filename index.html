@@ -13,15 +13,23 @@
     <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
     <div class="app-container">
         
-<!-- Khu vực Safe-to-spend & Lời nhắc -->
-        <header class="main-header">
-            <p class="subtitle">SAFE-TO-SPEND</p>
-            
-            <!-- Đã thêm thẻ div bọc lại để nút bấm nằm ngang hàng với số tiền -->
+        <!-- Khu vực Safe-to-spend & Lời nhắc -->
+        <header class="main-header">      
+            <!-- Nút gạt Toggle (Công tắc chuyển đổi) -->
             <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
-                <h1 id="ui-safe-spend" class="amount-large" style="margin-bottom: 0;">$0</h1>
-                <button id="btn-toggle-currency" style="background: var(--bg-color); border: none; padding: 6px 12px; border-radius: 12px; font-weight: 700; color: var(--blue); cursor: pointer; font-size: 14px;">AUD</button>
+                <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">AUD</span>
+                <label class="ios-switch">
+                    <input type="checkbox" id="checkbox-currency">
+                    <span class="slider round"></span>
+                </label>
+                <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">VND</span>
             </div>
+
+            <!-- Chữ SAFE TO SPEND to, đậm và nổi bật hơn -->
+            <p class="subtitle" style="font-size: 18px; color: var(--text-main); font-weight: 800; letter-spacing: 1.5px; margin-bottom: 4px;">SAFE-TO-SPEND</p>
+            
+            <!-- Vùng số tiền đứng độc lập, thoải mái diện tích -->
+            <h1 id="ui-safe-spend" class="amount-large" style="word-wrap: break-word; padding: 0 10px;">$0</h1>
             
             <div class="reminders">
                 <div class="pill box-rent"><span id="ui-rent-status">Đang tải...</span></div>
