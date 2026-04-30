@@ -66,25 +66,28 @@ async function fetchData() {
     }
 }
 
-// Hàm hiển thị tiền theo đúng loại tiền tệ
+// Hàm hiển thị tiền với tính năng tự động điều chỉnh kích thước (Responsive Font Size)
 function updateSafeToSpendUI() {
+    const uiElement = document.getElementById('ui-safe-spend');
+    
     if (isVND) {
-        const vndAmount = currentSafeToSpend * currentExchangeRate;
-        document.getElementById('ui-safe-spend').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(vndAmount);
-        btnToggleCurrency.innerText = "VND";
+        // 1. Tính toán và làm tròn số tiền Việt
+        const vndAmount = Math.round(currentSafeToSpend * currentExchangeRate);
+        
+        // 2. Định dạng theo chuẩn VN: 71.705.500 ₫
+        const formattedVnd = new Intl.NumberFormat('vi-VN').format(vndAmount) + ' ₫';
+        
+        // 3. Cập nhật giao diện với cỡ chữ nhỏ hơn để không bị tràn
+        uiElement.innerText = formattedVnd;
+        uiElement.style.fontSize = "34px"; // Giảm kích thước cho tiền Việt
+        uiElement.style.marginTop = "10px";
     } else {
-        document.getElementById('ui-safe-spend').innerText = formatMoney(currentSafeToSpend);
-        btnToggleCurrency.innerText = "AUD";
-    }
-}
-
-// Hàm hiển thị tiền (Chỉ thay đổi con số, không đụng tới nút)
-function updateSafeToSpendUI() {
-    if (isVND) {
-        const vndAmount = currentSafeToSpend * currentExchangeRate;
-        document.getElementById('ui-safe-spend').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(vndAmount);
-    } else {
-        document.getElementById('ui-safe-spend').innerText = formatMoney(currentSafeToSpend);
+        // 1. Hiển thị tiền AUD gốc
+        uiElement.innerText = formatMoney(currentSafeToSpend);
+        
+        // 2. Trả về cỡ chữ lớn mặc định cho tiền Đô
+        uiElement.style.fontSize = "48px";
+        uiElement.style.marginTop = "0px";
     }
 }
 
