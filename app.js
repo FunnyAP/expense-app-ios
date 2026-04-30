@@ -8,6 +8,10 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz1HvEnM323LNt0nqKtUicM
 // ==========================================
 let expenseCats = [];
 let incomeCats = [];
+let isVND = false;
+let currentSafeToSpend = 0;
+let currentExchangeRate = 18808; // Mặc định nếu chưa load được
+const btnToggleCurrency = document.getElementById('btn-toggle-currency');
 
 // Elements
 const overlay = document.getElementById('ui-overlay');
@@ -38,8 +42,11 @@ async function fetchData() {
         if (result.status === "success") {
             const data = result.data;
 
-            // Cập nhật Tổng quan
-            document.getElementById('ui-safe-spend').innerText = formatMoney(data.safeToSpend);
+            // Cập nhật Tổng quan (Đã sửa lại cho tính năng đổi tiền)
+            currentSafeToSpend = data.safeToSpend;
+            currentExchangeRate = data.exchangeRate || 18808; // Nếu API chưa trả về kịp thì lấy mặc định
+            updateSafeToSpendUI(); // Gọi hàm hiển thị tiền theo AUD/VND
+
             document.getElementById('ui-rent-status').innerText = data.rentStatus;
             document.getElementById('ui-salary-status').innerText = data.salaryStatus;
 
@@ -58,6 +65,24 @@ async function fetchData() {
         document.getElementById('ui-pools-container').innerHTML = "<p style='text-align:center; color:red;'>Lỗi tải dữ liệu. Hãy kiểm tra lại kết nối.</p>";
     }
 }
+
+// Hàm hiển thị tiền theo đúng loại tiền tệ
+function updateSafeToSpendUI() {
+    if (isVND) {
+        const vndAmount = currentSafeToSpend * currentExchangeRate;
+        document.getElementById('ui-safe-spend').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(vndAmount);
+        btnToggleCurrency.innerText = "VND";
+    } else {
+        document.getElementById('ui-safe-spend').innerText = formatMoney(currentSafeToSpend);
+        btnToggleCurrency.innerText = "AUD";
+    }
+}
+
+// Bắt sự kiện bấm nút đổi tiền
+btnToggleCurrency.addEventListener('click', () => {
+    isVND = !isVND;
+    updateSafeToSpendUI();
+});
 
 // Vẽ 4 cái Pool lên màn hình chính
 function renderPools(pools) {

@@ -13,10 +13,16 @@
     <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
     <div class="app-container">
         
-        <!-- Khu vực Safe-to-spend & Lời nhắc -->
+<!-- Khu vực Safe-to-spend & Lời nhắc -->
         <header class="main-header">
             <p class="subtitle">SAFE-TO-SPEND</p>
-            <h1 id="ui-safe-spend" class="amount-large">$0</h1>
+            
+            <!-- Đã thêm thẻ div bọc lại để nút bấm nằm ngang hàng với số tiền -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <h1 id="ui-safe-spend" class="amount-large" style="margin-bottom: 0;">$0</h1>
+                <button id="btn-toggle-currency" style="background: var(--bg-color); border: none; padding: 6px 12px; border-radius: 12px; font-weight: 700; color: var(--blue); cursor: pointer; font-size: 14px;">AUD</button>
+            </div>
+            
             <div class="reminders">
                 <div class="pill box-rent"><span id="ui-rent-status">Đang tải...</span></div>
                 <div class="pill box-salary"><span id="ui-salary-status">Đang tải...</span></div>
