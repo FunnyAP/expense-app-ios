@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <!-- Cấu hình chuẩn cho màn hình iPhone (chống zoom loạn xạ, full màn hình) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Sổ Thu Chi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
+    <div class="app-container">
+        
+        <!-- Khu vực Safe-to-spend & Lời nhắc -->
+        <header class="main-header">
+            <p class="subtitle">SAFE-TO-SPEND</p>
+            <h1 id="ui-safe-spend" class="amount-large">$0</h1>
+            <div class="reminders">
+                <div class="pill box-rent"><span id="ui-rent-status">Đang tải...</span></div>
+                <div class="pill box-salary"><span id="ui-salary-status">Đang tải...</span></div>
+            </div>
+        </header>
+
+        <!-- Khu vực 4 Pool Ngân sách -->
+        <section class="pools-section">
+            <h2 class="section-title">Ngân quỹ tháng này</h2>
+            <div id="ui-pools-container" class="pools-grid">
+                <!-- Javascript sẽ tự động vẽ 4 hộp Pool vào đây -->
+                <p style="text-align:center; color:#8e8e93;">Đang đồng bộ dữ liệu...</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- NÚT THÊM GIAO DỊCH (Floating Action Button) -->
+    <button class="fab-button" id="btn-open-modal">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+
+    <!-- MÀN HÌNH POPUP THÊM GIAO DỊCH (Bottom Sheet kiểu iOS) -->
+    <div class="overlay" id="ui-overlay"></div>
+    <div class="bottom-sheet" id="ui-bottom-sheet">
+        <div class="sheet-header">
+            <h3>Giao dịch mới</h3>
+            <button class="btn-close" id="btn-close-modal">Xong</button>
+        </div>
+        
+        <form id="transaction-form" class="form-container">
+            <!-- Loại giao dịch -->
+            <div class="segmented-control">
+                <input type="radio" id="type-expense" name="transType" value="Chi tiêu" checked>
+                <label for="type-expense">Chi tiêu</label>
+                <input type="radio" id="type-income" name="transType" value="Thu nhập">
+                <label for="type-income">Thu nhập</label>
+            </div>
+
+            <!-- Số tiền -->
+            <div class="input-group input-amount">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="input-amount" inputmode="decimal" placeholder="0" required>
+            </div>
+
+            <!-- Ngày tháng -->
+            <div class="input-group">
+                <label>Ngày</label>
+                <input type="date" id="input-date" required>
+            </div>
+
+            <!-- Hạng mục -->
+            <div class="input-group">
+                <label>Danh mục</label>
+                <select id="input-category" required>
+                    <option value="" disabled selected>Chọn danh mục...</option>
+                    <option value="NEW">+ Thêm mục mới...</option>
+                    <!-- Tự động load từ Google Sheets vào đây -->
+                </select>
+            </div>
+
+            <!-- Vùng ẩn: Dành cho khi thêm Hạng mục mới -->
+            <div id="new-category-wrapper" style="display: none;">
+                <div class="input-group">
+                    <label>Tên mục mới</label>
+                    <input type="text" id="input-new-cat" placeholder="Ví dụ: Cà phê, Spa...">
+                </div>
+                <div class="input-group" id="pool-select-wrapper">
+                    <label>Thuộc quỹ</label>
+                    <select id="input-new-pool">
+                        <option value="" disabled selected>Chọn quỹ...</option>
+                        <option value="Cố định (Rent)">Cố định (Rent)</option>
+                        <option value="Sinh hoạt">Sinh hoạt</option>
+                        <option value="Tận hưởng">Tận hưởng</option>
+                        <option value="Tích lũy">Tích lũy</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ghi chú -->
+            <div class="input-group">
+                <label>Ghi chú</label>
+                <input type="text" id="input-note" placeholder="Tùy chọn">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-form">Lưu Giao Dịch</button>
+        </form>
+    </div>
+
+    <!-- Link tới file xử lý logic -->
+    <script src="app.js"></script>
+</body>
+</html>

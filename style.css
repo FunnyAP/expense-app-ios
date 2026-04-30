@@ -1,0 +1,263 @@
+/* Tùy chỉnh màu sắc chuẩn iOS 17 */
+:root {
+    --bg-color: #F2F2F7;
+    --card-bg: #FFFFFF;
+    --text-main: #000000;
+    --text-sub: #8E8E93;
+    --blue: #007AFF;
+    --green: #34C759;
+    --red: #FF3B30;
+    --orange: #FF9500;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-container {
+    padding: 20px;
+    padding-bottom: 100px; /* Chừa chỗ cho nút dấu + */
+}
+
+/* Header Safe To Spend */
+.main-header {
+    text-align: center;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.amount-large {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+}
+
+/* Lời nhắc Nhỏ */
+.reminders {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.pill {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-block;
+}
+.box-rent { background-color: rgba(255, 59, 48, 0.1); color: var(--red); }
+.box-salary { background-color: rgba(52, 199, 89, 0.1); color: var(--green); }
+
+/* Lưới hiển thị 4 Pool */
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.pools-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.pool-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.pool-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.pool-name { font-weight: 600; font-size: 16px; }
+.pool-amount { font-weight: 700; font-size: 16px; }
+
+/* Thanh tiến độ */
+.progress-bar-bg {
+    height: 8px;
+    background-color: var(--bg-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+/* Nút bấm nổi (FAB) */
+.fab-button {
+    position: fixed;
+    bottom: max(30px, env(safe-area-inset-bottom));
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: var(--blue);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.2s;
+}
+
+.fab-button:active { transform: scale(0.9); }
+
+/* Bottom Sheet (Popup iOS) */
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+.overlay.active { opacity: 1; pointer-events: auto; }
+
+.bottom-sheet {
+    position: fixed;
+    bottom: -100%;
+    left: 0; right: 0;
+    background: var(--card-bg);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    z-index: 1001;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.bottom-sheet.active { bottom: 0; }
+
+.sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.btn-close {
+    background: none; border: none;
+    color: var(--blue);
+    font-size: 16px; font-weight: 600;
+}
+
+/* Form Inputs */
+.input-group {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E5E5EA;
+    padding-bottom: 12px;
+}
+
+.input-group label {
+    font-size: 16px;
+    color: var(--text-main);
+}
+
+.input-group input:not([type="radio"]), .input-group select {
+    text-align: right;
+    border: none;
+    font-size: 16px;
+    background: transparent;
+    color: var(--text-sub);
+    outline: none;
+}
+
+.input-amount {
+    justify-content: center;
+    border: none;
+    margin: 24px 0;
+}
+
+.input-amount .currency-symbol {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.input-amount input {
+    font-size: 40px;
+    font-weight: 600;
+    width: 50%;
+    text-align: left;
+    margin-left: 8px;
+    color: var(--text-main);
+}
+
+/* Nút chọn Thu / Chi kiểu iOS */
+.segmented-control {
+    display: flex;
+    background-color: #E5E5EA;
+    border-radius: 8px;
+    padding: 2px;
+    margin-bottom: 24px;
+}
+
+.segmented-control input[type="radio"] { display: none; }
+
+.segmented-control label {
+    flex: 1;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.segmented-control input[type="radio"]:checked + label {
+    background: #FFF;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.btn-submit {
+    width: 100%;
+    background: var(--blue);
+    color: #FFF;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 16px;
+}
