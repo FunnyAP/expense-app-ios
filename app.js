@@ -10,7 +10,9 @@ let expenseCats = [];
 let incomeCats = [];
 let isVND = false;
 let currentSafeToSpend = 0;
-let currentExchangeRate = 18808; // Mặc định nếu chưa load được
+let currentExchangeRate = 18808;
+let currentDates = { rent: null, salary: null }; // Lưu ngày gốc từ Backend
+
 const currencySwitch = document.getElementById('checkbox-currency');
 
 // Elements
@@ -26,7 +28,7 @@ const categorySelect = document.getElementById('input-category');
 const newCatWrapper = document.getElementById('new-category-wrapper');
 const poolSelectWrapper = document.getElementById('pool-select-wrapper');
 
-// Hàm Format tiền tệ (Có dấu phẩy phân cách)
+// Hàm Format tiền tệ
 const formatMoney = (amount) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
 };
@@ -42,140 +44,179 @@ async function fetchData() {
         if (result.status === "success") {
             const data = result.data;
 
-            // Cập nhật Tổng quan (Đã sửa lại cho tính năng đổi tiền)
+            // Cập nhật Tổng quan
             currentSafeToSpend = data.safeToSpend;
-            currentExchangeRate = data.exchangeRate || 18808; // Nếu API chưa trả về kịp thì lấy mặc định
-            updateSafeToSpendUI(); // Gọi hàm hiển thị tiền theo AUD/VND
+            currentExchangeRate = data.exchangeRate || 18808;
+            currentDates = data.dates; // Lưu ngày để dùng cho Popup chỉnh ngày
+            updateSafeToSpendUI();
 
             document.getElementById('ui-rent-status').innerText = data.rentStatus;
             document.getElementById('ui-salary-status').innerText = data.salaryStatus;
 
-            // Lưu danh mục vào biến toàn cục để dùng khi đổi Thu/Chi
             expenseCats = data.expenseCategories || [];
             incomeCats = data.incomeCategories || [];
             
-            // Vẽ lại danh sách 4 Pool
+            // Vẽ lại danh sách 4 Pool (Có kèm % và chi tiết Accordion)
             renderPools(data.pools);
 
-            // Cập nhật list Danh mục ban đầu (Mặc định là Chi tiêu)
             updateCategoryOptions("Chi tiêu");
         }
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
-        document.getElementById('ui-pools-container').innerHTML = "<p style='text-align:center; color:red;'>Lỗi tải dữ liệu. Hãy kiểm tra lại kết nối.</p>";
+        document.getElementById('ui-pools-container').innerHTML = "<p style='text-align:center; color:red;'>Lỗi tải dữ liệu.</p>";
     }
 }
 
-// Hàm hiển thị tiền với tính năng tự động điều chỉnh kích thước (Responsive Font Size)
 function updateSafeToSpendUI() {
     const uiElement = document.getElementById('ui-safe-spend');
-    
     if (isVND) {
-        // 1. Tính toán và làm tròn số tiền Việt
         const vndAmount = Math.round(currentSafeToSpend * currentExchangeRate);
-        
-        // 2. Định dạng theo chuẩn VN: 71.705.500 ₫
-        const formattedVnd = new Intl.NumberFormat('vi-VN').format(vndAmount) + ' ₫';
-        
-        // 3. Cập nhật giao diện với cỡ chữ nhỏ hơn để không bị tràn
-        uiElement.innerText = formattedVnd;
-        uiElement.style.fontSize = "34px"; // Giảm kích thước cho tiền Việt
+        uiElement.innerText = new Intl.NumberFormat('vi-VN').format(vndAmount) + ' ₫';
+        uiElement.style.fontSize = "34px";
         uiElement.style.marginTop = "10px";
     } else {
-        // 1. Hiển thị tiền AUD gốc
         uiElement.innerText = formatMoney(currentSafeToSpend);
-        
-        // 2. Trả về cỡ chữ lớn mặc định cho tiền Đô
         uiElement.style.fontSize = "48px";
         uiElement.style.marginTop = "0px";
     }
 }
 
-// Bắt sự kiện Gạt Toggle (Sáng/Tối)
 currencySwitch.addEventListener('change', (e) => {
-    isVND = e.target.checked; // Nếu gạt sang phải (checked) thì là VND, gạt trái là AUD
+    isVND = e.target.checked;
     updateSafeToSpendUI();
 });
 
-// Vẽ 4 cái Pool lên màn hình chính
+// NGHIỆP VỤ 2 & 3: Vẽ Pool kèm % và tính năng Accordion
 function renderPools(pools) {
     const container = document.getElementById('ui-pools-container');
-    container.innerHTML = ""; // Xóa chữ "Đang đồng bộ..."
+    container.innerHTML = "";
 
-    pools.forEach(pool => {
-        // Tránh lỗi chia cho 0
-        const percent = pool.budget > 0 ? (pool.spent / pool.budget) * 100 : 0;
-        const barWidth = percent > 100 ? 100 : percent; // Tối đa 100%
+    pools.forEach((pool, index) => {
+        const percent = pool.percent || 0;
+        const barWidth = percent > 100 ? 100 : percent;
         
-        // Màu sắc: Tiết kiệm thì màu xanh dương. Quá 90% thì màu đỏ.
         let barColor = "var(--green)";
         if (pool.name === "Tích lũy") barColor = "var(--blue)";
         else if (percent > 90) barColor = "var(--red)";
 
-        const html = `
-            <div class="pool-card">
+        // Tạo giao diện Accordion
+        const poolCard = document.createElement('div');
+        poolCard.className = 'pool-card';
+        
+        // Tạo nội dung chi tiết (Dropdown)
+        let detailsHtml = '<div class="pool-details" id="details-' + index + '" style="display:none; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">';
+        const detailsEntries = Object.entries(pool.details);
+        
+        if (detailsEntries.length > 0) {
+            detailsEntries.forEach(([cat, amt]) => {
+                detailsHtml += `
+                    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px; color:#666;">
+                        <span>${cat}</span>
+                        <span>${formatMoney(amt)}</span>
+                    </div>`;
+            });
+        } else {
+            detailsHtml += '<p style="font-size:12px; color:#999; text-align:center;">Chưa có chi tiêu</p>';
+        }
+        detailsHtml += '</div>';
+
+        poolCard.innerHTML = `
+            <div class="pool-main-info" onclick="toggleAccordion(${index})">
                 <div class="pool-header">
-                    <span class="pool-name">${pool.name}</span>
+                    <span class="pool-name">${pool.name} - <span style="color:var(--text-sub)">${percent}%</span></span>
                     <span class="pool-amount">${formatMoney(pool.remaining)}</span>
                 </div>
                 <div class="progress-bar-bg">
                     <div class="progress-bar-fill" style="width: ${barWidth}%; background-color: ${barColor}"></div>
                 </div>
             </div>
+            ${detailsHtml}
         `;
-        container.innerHTML += html;
+        container.appendChild(poolCard);
     });
+}
+
+// Hàm xử lý đóng mở Accordion
+function toggleAccordion(index) {
+    const detailEl = document.getElementById('details-' + index);
+    if (detailEl.style.display === "none") {
+        detailEl.style.display = "block";
+    } else {
+        detailEl.style.display = "none";
+    }
 }
 
 // ==========================================
 // 2. XỬ LÝ GIAO DIỆN (UI EVENTS)
 // ==========================================
 
-// Mở Bottom Sheet (Mặc định set ngày hôm nay)
+// NGHIỆP VỤ 1: Popup chỉnh ngày
+document.getElementById('ui-rent-status').parentElement.onclick = () => openDatePopup('rent');
+document.getElementById('ui-salary-status').parentElement.onclick = () => openDatePopup('salary');
+
+function openDatePopup(target) {
+    const newDate = prompt("Nhập ngày mới (YYYY-MM-DD):", target === 'rent' ? currentDates.rent.split('T')[0] : currentDates.salary.split('T')[0]);
+    if (newDate) {
+        updateDateOnSheet(target, newDate);
+    }
+}
+
+async function updateDateOnSheet(target, newDate) {
+    btnSubmit.disabled = true; // Dùng tạm nút này để chặn thao tác khi đang lưu
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "updateDate", target: target, newDate: newDate })
+        });
+        const result = await response.json();
+        if (result.status === "success") {
+            fetchData();
+            alert("Đã cập nhật ngày thành công!");
+        }
+    } catch (e) {
+        alert("Lỗi kết nối khi cập nhật ngày.");
+    } finally {
+        btnSubmit.disabled = false;
+    }
+}
+
+// Các sự kiện Modal Thu/Chi cũ
 btnOpen.addEventListener('click', () => {
     overlay.classList.add('active');
     bottomSheet.classList.add('active');
     document.getElementById('input-date').valueAsDate = new Date();
 });
 
-// Đóng Bottom Sheet
 const closeModal = () => {
     overlay.classList.remove('active');
     bottomSheet.classList.remove('active');
     form.reset();
     newCatWrapper.style.display = 'none';
-    updateCategoryOptions("Chi tiêu"); // Reset về Chi tiêu
+    updateCategoryOptions("Chi tiêu");
 };
 btnClose.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
 
-// Thay đổi Thu/Chi -> Đổi danh sách Hạng mục
 typeRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
         updateCategoryOptions(e.target.value);
-        newCatWrapper.style.display = 'none'; // Ẩn form thêm mới nếu đang mở
+        newCatWrapper.style.display = 'none';
     });
 });
 
-// Hàm cập nhật thẻ <select> Danh mục
 function updateCategoryOptions(type) {
     categorySelect.innerHTML = `<option value="" disabled selected>Chọn danh mục...</option><option value="NEW">+ Thêm mục mới...</option>`;
-    
     const list = type === "Chi tiêu" ? expenseCats : incomeCats;
-    
     list.forEach(item => {
         const catName = typeof item === 'object' ? item.name : item;
         categorySelect.innerHTML += `<option value="${catName}">${catName}</option>`;
     });
 }
 
-// Bắt sự kiện khi chọn "Thêm mục mới..."
 categorySelect.addEventListener('change', (e) => {
     if (e.target.value === "NEW") {
         newCatWrapper.style.display = 'block';
         document.getElementById('input-new-cat').required = true;
-        
-        // Nếu là Thu nhập thì không cần chọn Quỹ (Pool)
         const type = document.querySelector('input[name="transType"]:checked').value;
         if (type === "Thu nhập") {
             poolSelectWrapper.style.display = 'none';
@@ -191,17 +232,13 @@ categorySelect.addEventListener('change', (e) => {
     }
 });
 
-// ==========================================
-// 3. GỬI DỮ LIỆU LÊN GOOGLE SHEETS (POST)
-// ==========================================
+// GỬI GIAO DỊCH
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const type = document.querySelector('input[name="transType"]:checked').value;
     const isNew = categorySelect.value === "NEW";
     let category = isNew ? document.getElementById('input-new-cat').value : categorySelect.value;
     
-    // Tìm Pool tương ứng (Nếu không phải mục mới)
     let assignedPool = "";
     if (type === "Chi tiêu") {
         if (isNew) {
@@ -222,7 +259,6 @@ form.addEventListener('submit', async (e) => {
         note: document.getElementById('input-note').value
     };
 
-    // Đổi trạng thái nút bấm
     btnSubmit.innerText = "Đang lưu...";
     btnSubmit.disabled = true;
 
@@ -232,20 +268,18 @@ form.addEventListener('submit', async (e) => {
             body: JSON.stringify(payload)
         });
         const result = await response.json();
-        
         if (result.status === "success") {
             closeModal();
-            fetchData(); // Tải lại dữ liệu mới nhất để số dư nhảy
+            fetchData();
         } else {
             alert("Lỗi: " + result.message);
         }
     } catch (error) {
-        alert("Có lỗi kết nối mạng. Hãy thử lại!");
+        alert("Có lỗi kết nối mạng.");
     } finally {
         btnSubmit.innerText = "Lưu Giao Dịch";
         btnSubmit.disabled = false;
     }
 });
 
-// Khởi chạy lấy dữ liệu khi vừa mở app
 fetchData();

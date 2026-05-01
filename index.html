@@ -32,8 +32,13 @@
             <h1 id="ui-safe-spend" class="amount-large" style="word-wrap: break-word; padding: 0 10px;">$0</h1>
             
             <div class="reminders">
-                <div class="pill box-rent"><span id="ui-rent-status">Đang tải...</span></div>
-                <div class="pill box-salary"><span id="ui-salary-status">Đang tải...</span></div>
+    <!-- Thêm cursor:pointer và bọc lại để dễ bấm hơn trên iPhone -->
+                <div class="pill box-rent" style="cursor: pointer;">
+                        <span id="ui-rent-status">Đang tải...</span>
+                </div>
+                <div class="pill box-salary" style="cursor: pointer;">
+                    <span id="ui-salary-status">Đang tải...</span>
+                </div>
             </div>
         </header>
 
