@@ -27,20 +27,6 @@ const categorySelect = document.getElementById('input-category');
 const newCatWrapper = document.getElementById('new-category-wrapper');
 const poolSelectWrapper = document.getElementById('pool-select-wrapper');
 
-// ==========================================
-// KHỞI TẠO INPUT CHỌN NGÀY (NGHIỆP VỤ 1)
-// ==========================================
-// Tạo 2 input type="date" ẩn để lợi dụng tính năng chọn ngày của điện thoại
-const hiddenRentDateInput = document.createElement('input');
-hiddenRentDateInput.type = 'date';
-hiddenRentDateInput.style.display = 'none';
-document.body.appendChild(hiddenRentDateInput);
-
-const hiddenSalaryDateInput = document.createElement('input');
-hiddenSalaryDateInput.type = 'date';
-hiddenSalaryDateInput.style.display = 'none';
-document.body.appendChild(hiddenSalaryDateInput);
-
 // Hàm Format tiền tệ
 const formatMoney = (amount) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
@@ -61,9 +47,13 @@ async function fetchData() {
             currentSafeToSpend = data.safeToSpend;
             currentExchangeRate = data.exchangeRate || 18808;
             
-            // Set giá trị mặc định cho Input Date ẩn (cắt bỏ phần giờ T...)
-            if(data.dates.rent) hiddenRentDateInput.value = data.dates.rent.split('T')[0];
-            if(data.dates.salary) hiddenSalaryDateInput.value = data.dates.salary.split('T')[0];
+            // Lấy input date ẩn trên giao diện (Đã được định nghĩa trong HTML)
+            const rentDateInput = document.getElementById('date-rent');
+            const salaryDateInput = document.getElementById('date-salary');
+
+            // Gán ngày mặc định (nếu có thẻ input trên giao diện)
+            if(data.dates.rent && rentDateInput) rentDateInput.value = data.dates.rent.split('T')[0];
+            if(data.dates.salary && salaryDateInput) salaryDateInput.value = data.dates.salary.split('T')[0];
 
             updateSafeToSpendUI();
 
@@ -73,7 +63,7 @@ async function fetchData() {
             expenseCats = data.expenseCategories || [];
             incomeCats = data.incomeCategories || [];
             
-            // Vẽ lại danh sách 4 Pool (Có kèm % Cố định và Smart Notice)
+            // Vẽ lại danh sách 4 Pool
             renderPools(data.pools);
 
             updateCategoryOptions("Chi tiêu");
@@ -104,14 +94,13 @@ currencySwitch.addEventListener('change', (e) => {
 });
 
 // ==========================================
-// VẼ POOL (CẬP NHẬT NGHIỆP VỤ 2 & 3)
+// VẼ POOL KÈM ACCORDION
 // ==========================================
 function renderPools(pools) {
     const container = document.getElementById('ui-pools-container');
     container.innerHTML = "";
 
     pools.forEach((pool, index) => {
-        // Dùng progressPercent cho thanh ngang, và quotaPercent cho con chữ.
         const barWidth = pool.percent > 100 ? 100 : pool.percent;
         
         let barColor = "var(--green)";
@@ -121,10 +110,8 @@ function renderPools(pools) {
         const poolCard = document.createElement('div');
         poolCard.className = 'pool-card';
         
-        // Tạo chi tiết thả xuống
         let detailsHtml = '<div class="pool-details" id="details-' + index + '" style="display:none; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">';
         
-        // Chèn Smart Notice cho Rent
         if (pool.smartNotice) {
              detailsHtml += `<div style="background-color: #f0f8ff; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #0066cc; margin-bottom: 10px; text-align: center;">${pool.smartNotice}</div>`;
         }
@@ -146,7 +133,6 @@ function renderPools(pools) {
         poolCard.innerHTML = `
             <div class="pool-main-info" onclick="toggleAccordion(${index})" style="cursor: pointer;">
                 <div class="pool-header">
-                    <!-- Hiển thị Quota % (Định mức) thay vì % đã tiêu -->
                     <span class="pool-name">${pool.name} - <span style="color:var(--text-sub)">${pool.quotaPercent}%</span></span>
                     <span class="pool-amount">${formatMoney(pool.remaining)}</span>
                 </div>
@@ -170,40 +156,29 @@ function toggleAccordion(index) {
 }
 
 // ==========================================
-// 2. XỬ LÝ GIAO DIỆN (UI EVENTS) - BẢN MỚI
+// 2. XỬ LÝ GIAO DIỆN (UI EVENTS) - BẢN TỐI ƯU iOS
 // ==========================================
 
-// Sự kiện bấm vào viên thuốc Ngày Tháng -> Mở lịch chọn ngày
-document.getElementById('ui-rent-status').parentElement.onclick = () => {
-    // Gọi phương thức showPicker() nếu trình duyệt hỗ trợ (Chrome/Safari mới)
-    if('showPicker' in HTMLInputElement.prototype) {
-        hiddenRentDateInput.showPicker();
-    } else {
-        hiddenRentDateInput.click(); // Fallback cho trình duyệt cũ
-    }
-};
+// Lắng nghe sự kiện thay đổi ngày từ Input Tàng hình
+const rentDateInputObj = document.getElementById('date-rent');
+const salaryDateInputObj = document.getElementById('date-salary');
 
-document.getElementById('ui-salary-status').parentElement.onclick = () => {
-    if('showPicker' in HTMLInputElement.prototype) {
-        hiddenSalaryDateInput.showPicker();
-    } else {
-        hiddenSalaryDateInput.click();
-    }
-};
+if (rentDateInputObj) {
+    rentDateInputObj.addEventListener('change', (e) => {
+        if(e.target.value) updateDateOnSheet('rent', e.target.value);
+    });
+}
 
-// Lắng nghe sự kiện thay đổi ngày từ Input Ẩn
-hiddenRentDateInput.addEventListener('change', (e) => {
-    if(e.target.value) updateDateOnSheet('rent', e.target.value);
-});
-
-hiddenSalaryDateInput.addEventListener('change', (e) => {
-    if(e.target.value) updateDateOnSheet('salary', e.target.value);
-});
+if (salaryDateInputObj) {
+    salaryDateInputObj.addEventListener('change', (e) => {
+        if(e.target.value) updateDateOnSheet('salary', e.target.value);
+    });
+}
 
 // Hàm đẩy ngày lên Sheet
 async function updateDateOnSheet(target, newDate) {
-    // Đổi màu Pill để báo hiệu đang tải
     const targetElement = target === 'rent' ? document.getElementById('ui-rent-status') : document.getElementById('ui-salary-status');
+    const originalText = targetElement.innerText; // Lưu lại chữ cũ lỡ bị lỗi thì phục hồi
     targetElement.innerText = "Đang lưu...";
 
     try {
@@ -213,14 +188,13 @@ async function updateDateOnSheet(target, newDate) {
         });
         const result = await response.json();
         if (result.status === "success") {
-            fetchData(); // Tải lại toàn bộ dữ liệu (Bao gồm số ngày đã làm tròn)
+            fetchData(); 
         }
     } catch (e) {
         alert("Lỗi kết nối khi cập nhật ngày.");
-        fetchData(); // Reset lại UI
+        targetElement.innerText = originalText;
     }
 }
-
 
 // ==========================================
 // 3. THÊM GIAO DỊCH (GỬI LÊN GOOGLE SHEETS)
