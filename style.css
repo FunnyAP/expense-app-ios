@@ -285,16 +285,21 @@ body {
 }
 
 .input-amount .currency-symbol {
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 48px; /* Tăng từ 32px lên 48px */
+    font-weight: 700; /* Đậm hơn một chút */
+    color: var(--text-main);
+}
+
+.input-group input#input-amount {
+    font-size: 24px;
 }
 
 .input-amount input {
-    font-size: 40px;
-    font-weight: 600;
-    width: 50%;
+    font-size: 56px; /* Tăng từ 40px lên 56px */
+    font-weight: 700;
+    width: 65%; /* Mở rộng vùng nhập để gõ nhiều số 0 không bị khuất */
     text-align: left;
-    margin-left: 8px;
+    margin-left: 10px;
     color: var(--text-main);
 }
 
