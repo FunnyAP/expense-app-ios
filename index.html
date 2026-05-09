@@ -2,133 +2,473 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- Cấu hình chuẩn cho màn hình iPhone (chống zoom loạn xạ, full màn hình) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Sổ Thu Chi</title>
+    <title>Personal OS </title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
-    <div class="app-container">
-        
-        <!-- Khu vực Safe-to-spend & Lời nhắc -->
-        <header class="main-header">      
-            <!-- Nút gạt Toggle (Công tắc chuyển đổi) -->
-            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
-                <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">AUD</span>
-                <label class="ios-switch">
-                    <input type="checkbox" id="checkbox-currency">
-                    <span class="slider round"></span>
-                </label>
-                <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">VND</span>
-            </div>
 
-            <!-- Chữ SAFE TO SPEND to, đậm và nổi bật hơn -->
-            <p class="subtitle" style="font-size: 18px; color: var(--text-main); font-weight: 800; letter-spacing: 1.5px; margin-bottom: 4px;">SAFE-TO-SPEND</p>
-            
-            <!-- Vùng số tiền đứng độc lập, thoải mái diện tích -->
-            <h1 id="ui-safe-spend" class="amount-large" style="word-wrap: break-word; padding: 0 10px;">$0</h1>
-            
-            <div class="reminders">
-    <!-- Thêm class pill-date-wrapper và nhét thẻ input tàng hình vào trong -->
-                <div class="pill box-rent pill-date-wrapper">
-                    <span id="ui-rent-status">Đang tải...</span>
-                    <input type="date" id="date-rent" class="hidden-date-input">
-                </div>
+    <header class="top-nav-header">
+        <button class="menu-toggle" id="btn-sidebar-open">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="header-title" id="ui-header-title">Tài chính</div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <nav class="sidebar" id="app-sidebar">
+        <div class="sidebar-header">
+            <h2>Trinh Lan Chau</h2>
+            <p>Hannah</p>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item active" data-target="view-finance" data-title="Tài chính">
+                <svg viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"></path><path d="M21 12H15v-2h6v2z"></path></svg>
+                <span>Tài chính</span>
+            </li>
+
+            <li class="menu-item" data-target="view-task" data-title="Công việc">
+                <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <span>Công việc</span>
+            </li>
+
+            <li class="menu-item" data-target="view-nutrition" data-title="Dinh dưỡng">
+                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                <span>Coming soon</span>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <span>© 2026 Trương Trần Anh Phúc</span>
+        </div>
+    </nav>
+
+    <main class="spa-container">
+
+        <div id="view-finance" class="spa-view active">
+            <div class="app-container">
+
+                <header class="main-header">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">AUD</span>
+                        <label class="ios-switch">
+                            <input type="checkbox" id="checkbox-currency">
+                            <span class="slider round"></span>
+                        </label>
+                        <span style="font-size: 13px; font-weight: 700; color: #8E8E93;">VND</span>
+                    </div>
+
+                    <p class="subtitle" style="font-size: 18px; color: var(--text-main); font-weight: 800; letter-spacing: 1.5px; margin-bottom: 4px;">SAFE-TO-SPEND</p>
+                    <h1 id="ui-safe-spend" class="amount-large">$0</h1>
+
+                    <div class="reminders">
+                        <div class="pill box-rent">
+                            <span id="ui-rent-status">Đang tải khoản gần nhất...</span>
+                        </div>
+                        <div class="pill box-salary">
+                            <span id="ui-salary-status">Đang tải danh sách...</span>
+                        </div>
+                    </div>
+                </header>
+
+                <section class="timeline-section">
+                    <div class="section-header-row">
+                        <h2 class="section-title">Khoản sắp tới</h2>
+                        <button class="small-action-button" id="btn-open-plan-modal">+ Thêm</button>
+                    </div>
+
+                    <div id="ui-nearest-plan-card" class="nearest-plan-card">
+                        <p style="text-align:center; color:#8e8e93;">Đang đồng bộ khoản sắp tới...</p>
+                    </div>
+
+                    <div id="ui-plans-container" class="timeline-list"></div>
+                </section>
+
+                <section class="pools-section">
+                                    <h2 class="section-title">Ngân quỹ tháng này</h2>
+                                    <div id="ui-pools-container" class="pools-grid">
+                                        <p style="text-align:center; color:#8e8e93;">Đang đồng bộ dữ liệu...</p>
+                                    </div>
+                </section>
+
+                <section class="tuition-section finance-extra-section">
+                    <div class="section-header-row">
+                        <h2 class="section-title">Học phí</h2>
+                        <button class="small-action-button" id="btn-open-tuition-payment">+ Đóng</button>
+                    </div>
+
+                    <div class="finance-summary-card clean-tuition-card" id="ui-tuition-card">
+                        <div class="summary-top-row">
+                            <div>
+                                <p class="summary-label">Tổng đã đóng</p>
+                                <h3 id="ui-tuition-paid">$0</h3>
+                            </div>
+
+                            <span class="summary-pill-blue">AUD</span>
+                        </div>
+
+                        <button type="button" class="btn-card-secondary" id="btn-open-tuition-history">
+                            Lịch sử đóng
+                        </button>
+                    </div>
+                </section>
+
+                <section class="vnd-section finance-extra-section">
+                    <div class="section-header-row">
+                        <h2 class="section-title">Hũ tiết kiệm</h2>
+                        <button class="small-action-button" id="btn-open-vnd-config">Cài đặt</button>
+                    </div>
+
+                    <div class="finance-summary-card" id="ui-vnd-card">
+                        <div class="summary-card-top">
+                            <div>
+                                <p class="summary-label">Số dư hiện tại</p>
+                                <h3 id="ui-vnd-balance">0 ₫</h3>
+                            </div>
+                            <div class="summary-pill-green">VNĐ</div>
+                        </div>
+
+                        <div class="summary-meta-grid">
+                            <div>
+                                <span>Nhận mỗi kỳ</span>
+                                <strong id="ui-vnd-monthly">0 ₫</strong>
+                            </div>
+                            <div>
+                                <span>Ngày nhận tiếp</span>
+                                <strong id="ui-vnd-next-date">Chưa đặt</strong>
+                            </div>
+                            <div>
+                                <span>Chu kỳ</span>
+                                <strong id="ui-vnd-cycle">-</strong>
+                            </div>
+                            <div>
+                                <span>Tự động</span>
+                                <strong id="ui-vnd-auto">Tắt</strong>
+                            </div>
+                        </div>
+
+                        <div class="card-actions-row two-buttons">
+                            <button class="btn-card-secondary" id="btn-open-vnd-deposit">+ Nạp thủ công</button>
+                            <button class="btn-card-secondary" id="btn-open-vnd-history">Lịch sử</button>
+                        </div>
+                    </div>
+                </section>
+
                 
-                <div class="pill box-salary pill-date-wrapper">
-                    <span id="ui-salary-status">Đang tải...</span>
-                    <input type="date" id="date-salary" class="hidden-date-input">
-                </div>
             </div>
-        </header>
 
-        <!-- Khu vực 4 Pool Ngân sách -->
-        <section class="pools-section">
-            <h2 class="section-title">Ngân quỹ tháng này</h2>
-            <div id="ui-pools-container" class="pools-grid">
-                <!-- Javascript sẽ tự động vẽ 4 hộp Pool vào đây -->
-                <p style="text-align:center; color:#8e8e93;">Đang đồng bộ dữ liệu...</p>
+            <button class="fab-button" id="btn-open-modal">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
+
+        <div id="view-task" class="spa-view">
+            <div class="app-container">
+                <p style="text-align: center; margin-top: 50px; color: var(--text-sub);">Module Task đang phát triển...</p>
             </div>
-        </section>
+        </div>
 
-    </div>
+        <div id="view-nutrition" class="spa-view">
+            <div class="app-container">
+                <p style="text-align: center; margin-top: 50px; color: var(--text-sub);">Module Nutrition đang phát triển...</p>
+            </div>
+        </div>
 
-    <!-- NÚT THÊM GIAO DỊCH (Floating Action Button) -->
-    <button class="fab-button" id="btn-open-modal">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-    </button>
+    </main>
 
-    <!-- MÀN HÌNH POPUP THÊM GIAO DỊCH (Bottom Sheet kiểu iOS) -->
     <div class="overlay" id="ui-overlay"></div>
+
+    <!-- Bottom Sheet: Giao dịch nhanh -->
     <div class="bottom-sheet" id="ui-bottom-sheet">
         <div class="sheet-header">
             <h3>Giao dịch mới</h3>
             <button class="btn-close" id="btn-close-modal">Xong</button>
         </div>
-        
+
         <form id="transaction-form" class="form-container">
-            <!-- Loại giao dịch -->
             <div class="segmented-control">
                 <input type="radio" id="type-expense" name="transType" value="Chi tiêu" checked>
                 <label for="type-expense">Chi tiêu</label>
+
                 <input type="radio" id="type-income" name="transType" value="Thu nhập">
                 <label for="type-income">Thu nhập</label>
             </div>
 
-            <!-- Số tiền -->
             <div class="input-group input-amount">
                 <span class="currency-symbol">$</span>
                 <input type="number" id="input-amount" inputmode="decimal" placeholder="0" required>
             </div>
 
-            <!-- Ngày tháng -->
             <div class="input-group">
                 <label>Ngày</label>
                 <input type="date" id="input-date" required>
             </div>
 
-            <!-- Hạng mục -->
             <div class="input-group">
                 <label>Danh mục</label>
                 <select id="input-category" required>
                     <option value="" disabled selected>Chọn danh mục...</option>
                     <option value="NEW">+ Thêm mục mới...</option>
-                    <!-- Tự động load từ Google Sheets vào đây -->
                 </select>
             </div>
 
-            <!-- Vùng ẩn: Dành cho khi thêm Hạng mục mới -->
             <div id="new-category-wrapper" style="display: none;">
                 <div class="input-group">
-                    <label>Tên mục mới</label>
-                    <input type="text" id="input-new-cat" placeholder="Ví dụ: Cà phê, Spa...">
+                    <input type="text" id="input-new-cat" placeholder="Tên mục mới">
                 </div>
+
                 <div class="input-group" id="pool-select-wrapper">
-                    <label>Thuộc quỹ</label>
-                    <select id="input-new-pool">
-                        <option value="" disabled selected>Chọn quỹ...</option>
-                        <option value="Cố định (Rent)">Cố định (Rent)</option>
-                        <option value="Sinh hoạt">Sinh hoạt</option>
-                        <option value="Tận hưởng">Tận hưởng</option>
-                        <option value="Tích lũy">Tích lũy</option>
-                    </select>
+                    <select id="input-new-pool"></select>
                 </div>
             </div>
 
-            <!-- Ghi chú -->
             <div class="input-group">
-                <label>Ghi chú</label>
-                <input type="text" id="input-note" placeholder="Tùy chọn">
+                <input type="text" id="input-note" placeholder="Ghi chú (Tùy chọn)">
             </div>
 
             <button type="submit" class="btn-submit" id="btn-submit-form">Lưu Giao Dịch</button>
         </form>
     </div>
 
-    <!-- Link tới file xử lý logic -->
+    <!-- Bottom Sheet: Thêm / Sửa khoản sắp tới -->
+    <div class="bottom-sheet" id="ui-plan-sheet">
+        <div class="sheet-header">
+            <h3 id="plan-sheet-title">Khoản sắp tới</h3>
+            <button class="btn-close" id="btn-close-plan-modal">Xong</button>
+        </div>
+
+        <form id="plan-form" class="form-container">
+            <input type="hidden" id="input-plan-id">
+
+            <div class="segmented-control">
+                <input type="radio" id="plan-type-expense" name="planType" value="Chi tiêu" checked>
+                <label for="plan-type-expense">Chi tiêu</label>
+
+                <input type="radio" id="plan-type-income" name="planType" value="Thu nhập">
+                <label for="plan-type-income">Thu nhập</label>
+            </div>
+
+            <div class="input-group">
+                <label>Tên khoản</label>
+                <input type="text" id="input-plan-title" placeholder="VD: Spotify" required>
+            </div>
+
+            <div class="input-group input-amount">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="input-plan-amount" inputmode="decimal" placeholder="0" required>
+            </div>
+
+            <div class="input-group">
+                <label>Đến hạn</label>
+                <input type="date" id="input-plan-due-date" required>
+            </div>
+
+            <div class="input-group">
+                <label>Danh mục</label>
+                <select id="input-plan-category" required>
+                    <option value="" disabled selected>Chọn danh mục...</option>
+                    <option value="NEW">+ Thêm mục mới...</option>
+                </select>
+            </div>
+
+            <div id="plan-new-category-wrapper" style="display: none;">
+                <div class="input-group">
+                    <input type="text" id="input-plan-new-cat" placeholder="Tên mục mới">
+                </div>
+
+                <div class="input-group" id="plan-pool-select-wrapper">
+                    <select id="input-plan-new-pool"></select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Lặp lại</label>
+                <label class="ios-switch">
+                    <input type="checkbox" id="input-plan-recurring">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="input-group" id="plan-cycle-wrapper" style="display:none;">
+                <label>Chu kỳ ngày</label>
+                <input type="number" id="input-plan-cycle-days" inputmode="numeric" placeholder="30">
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="input-plan-note" placeholder="Ghi chú (Tùy chọn)">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-plan-form">Lưu khoản sắp tới</button>
+        </form>
+    </div>
+
+    <!-- Bottom Sheet: Chi tiết khoản sắp tới -->
+    <div class="bottom-sheet" id="ui-plan-detail-sheet">
+        <div class="sheet-header">
+            <h3 id="plan-detail-title">Chi tiết khoản</h3>
+            <button class="btn-close" id="btn-close-plan-detail">Xong</button>
+        </div>
+
+        <div class="plan-detail-box">
+            <div class="detail-row">
+                <span>Loại</span>
+                <strong id="plan-detail-type">-</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Số tiền</span>
+                <strong id="plan-detail-amount">-</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Đến hạn</span>
+                <strong id="plan-detail-due-date">-</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Danh mục</span>
+                <strong id="plan-detail-category">-</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Pool</span>
+                <strong id="plan-detail-pool">-</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Lặp lại</span>
+                <strong id="plan-detail-recurring">-</strong>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Số tiền xác nhận</label>
+            <input type="number" id="confirm-plan-amount" inputmode="decimal" placeholder="0">
+        </div>
+
+        <button type="button" class="btn-submit" id="btn-confirm-plan">Xác nhận đã thu/chi</button>
+        <button type="button" class="btn-secondary" id="btn-edit-plan">Sửa khoản này</button>
+        <button type="button" class="btn-danger" id="btn-delete-plan">Xóa khoản này</button>
+    </div>
+
+
+
+    <!-- Bottom Sheet: Đóng học phí -->
+    <div class="bottom-sheet" id="ui-tuition-payment-sheet">
+        <div class="sheet-header">
+            <h3>Đóng học phí</h3>
+            <button class="btn-close" id="btn-close-tuition-payment">Xong</button>
+        </div>
+
+        <form id="tuition-payment-form" class="form-container">
+            <div class="input-group input-amount">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="input-tuition-amount" inputmode="decimal" placeholder="0" required>
+            </div>
+
+            <div class="input-group">
+                <label>Ngày đóng</label>
+                <input type="date" id="input-tuition-date" required>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="input-tuition-note" placeholder="Nội dung / kỳ học / ghi chú">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-tuition-payment">Lưu khoản học phí</button>
+        </form>
+    </div>
+
+    <!-- Bottom Sheet: Lịch sử học phí -->
+    <div class="bottom-sheet" id="ui-tuition-history-sheet">
+        <div class="sheet-header">
+            <h3>Lịch sử học phí</h3>
+            <button class="btn-close" id="btn-close-tuition-history">Xong</button>
+        </div>
+
+        <div id="ui-tuition-history-list" class="history-list">
+            <p style="text-align:center; color:#8e8e93;">Chưa có dữ liệu học phí.</p>
+        </div>
+    </div>
+
+    <!-- Bottom Sheet: Cài đặt hũ tiết kiệm -->
+    <div class="bottom-sheet" id="ui-vnd-config-sheet">
+        <div class="sheet-header">
+            <h3>Cài đặt hũ tiết kiệm</h3>
+            <button class="btn-close" id="btn-close-vnd-config">Xong</button>
+        </div>
+
+        <form id="vnd-config-form" class="form-container">
+            <div class="input-group input-amount">
+                <span class="currency-symbol">₫</span>
+                <input type="number" id="input-vnd-amount" inputmode="numeric" placeholder="0" required>
+            </div>
+
+            <div class="input-group">
+                <label>Ngày nhận tiếp</label>
+                <input type="date" id="input-vnd-next-date" required>
+            </div>
+
+            <div class="input-group">
+                <label>Chu kỳ ngày</label>
+                <input type="number" id="input-vnd-cycle-days" inputmode="numeric" placeholder="30" required>
+            </div>
+
+            <div class="input-group">
+                <label>Tự động cộng</label>
+                <label class="ios-switch">
+                    <input type="checkbox" id="input-vnd-auto-enabled">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-vnd-config">Lưu cài đặt</button>
+        </form>
+    </div>
+
+    <!-- Bottom Sheet: Nạp thủ công hũ tiết kiệm -->
+    <div class="bottom-sheet" id="ui-vnd-deposit-sheet">
+        <div class="sheet-header">
+            <h3>Nạp hũ tiết kiệm</h3>
+            <button class="btn-close" id="btn-close-vnd-deposit">Xong</button>
+        </div>
+
+        <form id="vnd-deposit-form" class="form-container">
+            <div class="input-group input-amount">
+                <span class="currency-symbol">₫</span>
+                <input type="number" id="input-vnd-deposit-amount" inputmode="numeric" placeholder="0" required>
+            </div>
+
+            <div class="input-group">
+                <label>Ngày nhận</label>
+                <input type="date" id="input-vnd-deposit-date" required>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="input-vnd-deposit-note" placeholder="Ghi chú (Tùy chọn)">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-vnd-deposit">Lưu khoản VNĐ</button>
+        </form>
+    </div>
+
+    <!-- Bottom Sheet: Lịch sử hũ tiết kiệm -->
+    <div class="bottom-sheet" id="ui-vnd-history-sheet">
+        <div class="sheet-header">
+            <h3>Lịch sử hũ tiết kiệm</h3>
+            <button class="btn-close" id="btn-close-vnd-history">Xong</button>
+        </div>
+
+        <div id="ui-vnd-history-list" class="history-list">
+            <p style="text-align:center; color:#8e8e93;">Chưa có dữ liệu hũ tiết kiệm.</p>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

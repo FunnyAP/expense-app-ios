@@ -27,7 +27,7 @@ body {
 
 .app-container {
     padding: 20px;
-    padding-bottom: 100px; /* Chừa chỗ cho nút dấu + */
+    padding-bottom: 100px;
 }
 
 /* Header Safe To Spend */
@@ -56,7 +56,7 @@ body {
     margin-bottom: 16px;
 }
 
-/* Lời nhắc Nhỏ */
+/* Lời nhắc nhỏ */
 .reminders {
     display: flex;
     flex-direction: column;
@@ -65,65 +65,155 @@ body {
 }
 
 .pill {
-    padding: 6px 12px;
+    padding: 8px 16px;
     border-radius: 20px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     display: inline-block;
-}
-
-/* Biến Pill thành khung chứa */
-.pill-date-wrapper {
-    position: relative;
-    overflow: hidden;
-}
-
-/* Thẻ input chọn ngày nằm đè lên trên nhưng tàng hình 100% */
-.hidden-date-input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0; /* Tàng hình */
     cursor: pointer;
-    /* Reset style chuẩn cho iOS */
-    -webkit-appearance: none;
-    appearance: none;
+    border: none;
+    transition: opacity 0.2s;
 }
+
+.pill:active {
+    opacity: 0.6;
+}
+
 .box-rent { background-color: rgba(255, 59, 48, 0.1); color: var(--red); }
 .box-salary { background-color: rgba(52, 199, 89, 0.1); color: var(--green); }
 
-/* Lưới hiển thị 4 Pool */
+/* Section chung */
 .section-title {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 16px;
 }
 
+.section-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.section-header-row .section-title {
+    margin-bottom: 0;
+}
+
+.small-action-button {
+    border: none;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.small-action-button:active {
+    opacity: 0.65;
+}
+
+/* Khoản sắp tới */
+.timeline-section {
+    margin-bottom: 24px;
+}
+
+.nearest-plan-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.nearest-plan-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.nearest-plan-title {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.nearest-plan-days {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+    background: rgba(255, 59, 48, 0.1);
+    padding: 5px 9px;
+    border-radius: 999px;
+}
+
+.nearest-plan-meta {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.timeline-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.timeline-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.timeline-card:active {
+    transform: scale(0.98);
+}
+
+.timeline-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timeline-title {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.timeline-amount {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.timeline-sub {
+    margin-top: 6px;
+    color: var(--text-sub);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.timeline-income {
+    color: var(--green);
+}
+
+.timeline-expense {
+    color: var(--red);
+}
+
+/* Lưới hiển thị 4 Pool */
 .pools-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
 }
 
-.pool-card {
-    background-color: var(--card-bg);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-}
-
-.pool-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
-.pool-name { font-weight: 600; font-size: 16px; }
-.pool-amount { font-weight: 700; font-size: 16px; }
-
-/* HIỆU ỨNG ACCORDION CHO POOL (NGHIỆP VỤ 3) */
 .pool-card {
     background-color: var(--card-bg);
     border-radius: 16px;
@@ -141,12 +231,20 @@ body {
     width: 100%;
 }
 
+.pool-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.pool-name { font-weight: 600; font-size: 16px; }
+.pool-amount { font-weight: 700; font-size: 16px; }
+
 .pool-details {
     overflow: hidden;
     transition: max-height 0.3s ease-out, opacity 0.3s ease;
 }
 
-/* Kiểu dáng cho từng dòng danh mục con trong Dropdown */
 .detail-item {
     display: flex;
     justify-content: space-between;
@@ -166,12 +264,6 @@ body {
     font-size: 14px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Tinh chỉnh phần trăm hiển thị (NGHIỆP VỤ 2) */
 .pool-percent {
     font-size: 12px;
     font-weight: 600;
@@ -180,22 +272,6 @@ body {
     padding: 2px 6px;
     border-radius: 6px;
     margin-left: 5px;
-}
-
-/* Biến Pill ngày tháng thành nút bấm (NGHIỆP VỤ 1) */
-.pill {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-block;
-    cursor: pointer;
-    border: none;
-    transition: opacity 0.2s;
-}
-
-.pill:active {
-    opacity: 0.6;
 }
 
 /* Thanh tiến độ */
@@ -212,7 +288,7 @@ body {
     transition: width 0.4s ease, background-color 0.4s ease;
 }
 
-/* Nút bấm nổi (FAB) */
+/* Nút bấm nổi */
 .fab-button {
     position: fixed;
     bottom: max(30px, env(safe-area-inset-bottom));
@@ -234,7 +310,7 @@ body {
 
 .fab-button:active { transform: scale(0.9); }
 
-/* Bottom Sheet (Popup iOS) */
+/* Bottom Sheet */
 .overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -244,7 +320,11 @@ body {
     transition: opacity 0.3s;
     z-index: 1000;
 }
-.overlay.active { opacity: 1; pointer-events: auto; }
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 .bottom-sheet {
     position: fixed;
@@ -259,7 +339,10 @@ body {
     max-height: 90vh;
     overflow-y: auto;
 }
-.bottom-sheet.active { bottom: 0; }
+
+.bottom-sheet.active {
+    bottom: 0;
+}
 
 .sheet-header {
     display: flex;
@@ -269,9 +352,11 @@ body {
 }
 
 .btn-close {
-    background: none; border: none;
+    background: none;
+    border: none;
     color: var(--blue);
-    font-size: 16px; font-weight: 600;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 /* Form Inputs */
@@ -282,11 +367,13 @@ body {
     align-items: center;
     border-bottom: 1px solid #E5E5EA;
     padding-bottom: 12px;
+    gap: 12px;
 }
 
 .input-group label {
     font-size: 16px;
     color: var(--text-main);
+    white-space: nowrap;
 }
 
 .input-group input:not([type="radio"]), .input-group select {
@@ -296,6 +383,7 @@ body {
     background: transparent;
     color: var(--text-sub);
     outline: none;
+    width: 100%;
 }
 
 .input-amount {
@@ -305,25 +393,26 @@ body {
 }
 
 .input-amount .currency-symbol {
-    font-size: 48px; /* Tăng từ 32px lên 48px */
-    font-weight: 700; /* Đậm hơn một chút */
+    font-size: 48px;
+    font-weight: 700;
     color: var(--text-main);
 }
 
-.input-group input#input-amount {
+.input-group input#input-amount,
+.input-group input#input-plan-amount {
     font-size: 24px;
 }
 
 .input-amount input {
-    font-size: 56px; /* Tăng từ 40px lên 56px */
+    font-size: 56px;
     font-weight: 700;
-    width: 65%; /* Mở rộng vùng nhập để gõ nhiều số 0 không bị khuất */
+    width: 65%;
     text-align: left;
     margin-left: 10px;
     color: var(--text-main);
 }
 
-/* Nút chọn Thu / Chi kiểu iOS */
+/* Segmented Control */
 .segmented-control {
     display: flex;
     background-color: #E5E5EA;
@@ -332,7 +421,9 @@ body {
     margin-bottom: 24px;
 }
 
-.segmented-control input[type="radio"] { display: none; }
+.segmented-control input[type="radio"] {
+    display: none;
+}
 
 .segmented-control label {
     flex: 1;
@@ -362,44 +453,559 @@ body {
     margin-top: 16px;
 }
 
-/* =======================================
-   CSS CHO NÚT GẠT TOGGLE ĐỔI TIỀN (CHUẨN IOS) 
-   ======================================= */
+.btn-secondary {
+    width: 100%;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.btn-danger {
+    width: 100%;
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--red);
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+/* Plan detail */
+.plan-detail-box {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 18px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span {
+    color: var(--text-sub);
+    font-size: 14px;
+}
+
+.detail-row strong {
+    font-size: 14px;
+    text-align: right;
+}
+
+/* Toggle đổi tiền */
 .ios-switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    min-width: 50px;
+    height: 28px;
 }
-.ios-switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
+
+.ios-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
+
 .ios-switch .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #E5E5EA; /* Màu xám nhạt mặc định */
-  transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
-  border-radius: 30px;
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #E5E5EA;
+    transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-radius: 30px;
 }
+
 .ios-switch .slider:before {
-  position: absolute;
-  content: "";
-  height: 24px;
-  width: 24px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-/* Khi gạt sang phải (Bật VND) */
+
 .ios-switch input:checked + .slider {
-  background-color: var(--blue);
+    background-color: var(--blue);
 }
+
 .ios-switch input:checked + .slider:before {
-  transform: translateX(22px);
+    transform: translateX(22px);
+}
+
+/* Sidebar & SPA Layout */
+.top-nav-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    background: rgba(242, 242, 247, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 800;
+    border-bottom: 0.5px solid rgba(0,0,0,0.1);
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: var(--blue);
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.header-title {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--card-bg);
+    z-index: 1100;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.open {
+    transform: translateX(280px);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 1050;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sidebar-header {
+    padding: 60px 20px 30px;
+    background: var(--bg-color);
+}
+
+.sidebar-header h2 {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.sidebar-header p {
+    color: var(--text-sub);
+    font-size: 12px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 20px 10px;
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    transition: background 0.2s;
+}
+
+.menu-item svg {
+    width: 22px;
+    height: 22px;
+    margin-right: 15px;
+    stroke: var(--text-sub);
+    fill: none;
+    stroke-width: 2;
+}
+
+.menu-item span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.menu-item.active {
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+}
+
+.menu-item.active svg {
+    stroke: var(--blue);
+}
+
+.sidebar-footer {
+    padding: 20px;
+    font-size: 10px;
+    color: var(--text-sub);
+    border-top: 0.5px solid #eee;
+}
+
+.spa-view {
+    display: none;
+}
+
+.spa-view.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================
+   TUITION & VND FUND SECTIONS
+   Dùng lại tinh thần iOS/card hiện tại
+   ========================================== */
+.finance-extra-section {
+    margin-bottom: 24px;
+}
+
+.finance-summary-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.summary-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.summary-label {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.finance-summary-card h3 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.summary-pill-blue,
+.summary-pill-green {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.summary-pill-blue {
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+}
+
+.summary-pill-green {
+    background: rgba(52, 199, 89, 0.12);
+    color: var(--green);
+}
+
+.summary-progress-bg {
+    height: 8px;
+    background: var(--bg-color);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.summary-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.blue-fill { background: var(--blue); }
+.green-fill { background: var(--green); }
+
+.summary-meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--text-sub);
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.summary-meta-row strong {
+    color: var(--text-main);
+}
+
+.summary-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.summary-meta-grid div {
+    background: var(--bg-color);
+    border-radius: 14px;
+    padding: 10px;
+}
+
+.summary-meta-grid span {
+    display: block;
+    color: var(--text-sub);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.summary-meta-grid strong {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.card-actions-row {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+}
+
+.card-actions-row.two-buttons .btn-card-secondary {
+    flex: 1;
+}
+
+.btn-card-secondary {
+    width: 100%;
+    border: none;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-card-secondary:active {
+    opacity: 0.65;
+}
+
+.history-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.history-item {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.history-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.history-title {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.history-amount {
+    font-size: 15px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.history-sub {
+    color: var(--text-sub);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.history-note {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+@media (max-width: 380px) {
+    .summary-meta-row {
+        flex-direction: column;
+    }
+
+    .summary-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================
+   FINANCE EXTRA SECTIONS: TUITION / VND FUND
+   ========================================== */
+
+.finance-extra-section {
+    margin-bottom: 24px;
+}
+
+.finance-summary-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.clean-tuition-card {
+    padding: 16px;
+}
+
+.summary-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.summary-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-bottom: 6px;
+}
+
+.finance-summary-card h3 {
+    font-size: 26px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.summary-pill-blue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 44px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(0, 122, 255, 0.12);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.summary-pill-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 44px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(52, 199, 89, 0.14);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.btn-card-secondary {
+    width: 100%;
+    border: none;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-card-secondary:active {
+    opacity: 0.65;
+}
+
+/* Nếu section Pool đưa lên trên thì tạo khoảng cách đẹp hơn */
+.pools-section {
+    margin-bottom: 24px;
+}
+
+/* Hũ tiết kiệm */
+.vnd-fund-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.vnd-fund-mini-card {
+    background: var(--bg-color);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.vnd-fund-mini-card p {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.vnd-fund-mini-card strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* Tránh nút + che nội dung khi kéo xuống dưới */
+.app-container {
+    padding-bottom: 130px;
 }
