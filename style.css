@@ -291,7 +291,7 @@ body {
 /* Nút bấm nổi */
 .fab-button {
     position: fixed;
-    bottom: max(30px, env(safe-area-inset-bottom));
+    bottom: max(350px, env(safe-area-inset-bottom));
     right: 20px;
     width: 60px;
     height: 60px;
