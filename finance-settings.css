@@ -1,0 +1,401 @@
+/* ==========================================
+   FINANCE SETTINGS PANEL
+   Cài đặt riêng cho module Tài chính
+   ========================================== */
+
+.settings-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--blue);
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.settings-toggle:active {
+    background: rgba(0, 122, 255, 0.1);
+    transform: scale(0.94);
+}
+
+/* Panel trượt từ phải sang */
+.finance-settings-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    z-index: 900;
+    transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.finance-settings-panel.active {
+    right: 0;
+}
+
+.finance-settings-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    min-height: 72px;
+    padding: 14px 18px;
+    background: rgba(242, 242, 247, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.finance-settings-back {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    font-size: 22px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.finance-settings-back:active {
+    opacity: 0.65;
+    transform: scale(0.95);
+}
+
+.finance-settings-header h2 {
+    font-size: 21px;
+    font-weight: 850;
+    letter-spacing: -0.3px;
+    margin-bottom: 3px;
+}
+
+.finance-settings-header p {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+.finance-settings-content {
+    padding: 18px;
+    padding-bottom: 120px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.finance-settings-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.035);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.finance-settings-card:active {
+    transform: scale(0.985);
+    opacity: 0.75;
+}
+
+.settings-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-card-main h3 {
+    font-size: 17px;
+    font-weight: 850;
+    margin-bottom: 5px;
+    letter-spacing: -0.2px;
+}
+
+.settings-card-main p {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.settings-card-side {
+    min-width: 64px;
+    min-height: 54px;
+    border-radius: 15px;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.settings-card-side strong {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--blue);
+    line-height: 1;
+    text-align: center;
+}
+
+.settings-card-side span {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ==========================================
+   SETTINGS BOTTOM SHEETS
+   ========================================== */
+
+.settings-sheet-actions {
+    margin-bottom: 16px;
+}
+
+.settings-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.settings-row {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.settings-row-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-row-title {
+    font-size: 15px;
+    font-weight: 850;
+    margin-bottom: 5px;
+    color: var(--text-main);
+}
+
+.settings-row-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.settings-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.settings-mini-button {
+    border: none;
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--blue);
+    border-radius: 11px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.settings-mini-button:active {
+    opacity: 0.65;
+}
+
+.settings-mini-danger {
+    border: none;
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--red);
+    border-radius: 11px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.settings-mini-danger:active {
+    opacity: 0.65;
+}
+
+/* Pool settings */
+.pool-setting-row {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+}
+
+.pool-setting-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.pool-setting-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.pool-setting-name label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.pool-setting-name input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 850;
+    outline: none;
+}
+
+.pool-setting-percent {
+    width: 82px;
+    min-width: 82px;
+}
+
+.pool-setting-percent label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.pool-setting-percent input {
+    width: 100%;
+    border: none;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 850;
+    color: var(--text-main);
+    outline: none;
+}
+
+.pool-setting-progress {
+    height: 7px;
+    background: #fff;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.pool-setting-progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 999px;
+    transition: width 0.25s ease;
+}
+
+.settings-total-row {
+    margin-top: 14px;
+    margin-bottom: 4px;
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-total-row span {
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 700;
+}
+
+.settings-total-row strong {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--blue);
+}
+
+.settings-total-row.invalid strong {
+    color: var(--red);
+}
+
+.settings-total-row.valid strong {
+    color: var(--green);
+}
+
+/* Form category */
+#finance-category-pool-wrapper.hidden {
+    display: none;
+}
+
+/* Exchange rate */
+#input-finance-exchange-rate {
+    font-weight: 800;
+}
+
+/* ==========================================
+   SMALL SCREEN
+   ========================================== */
+
+@media (max-width: 380px) {
+    .finance-settings-content {
+        padding: 14px;
+        padding-bottom: 120px;
+    }
+
+    .finance-settings-card {
+        align-items: flex-start;
+    }
+
+    .settings-card-side {
+        min-width: 56px;
+    }
+
+    .settings-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-row-actions {
+        width: 100%;
+    }
+
+    .settings-mini-button,
+    .settings-mini-danger {
+        flex: 1;
+    }
+}

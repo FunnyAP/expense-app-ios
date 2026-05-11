@@ -5,17 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Personal OS </title>
+    <title>Personal OS</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="finance-settings.css">
 </head>
 <body>
 
     <header class="top-nav-header">
         <button class="menu-toggle" id="btn-sidebar-open">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
         </button>
+
         <div class="header-title" id="ui-header-title">Tài chính</div>
-        <div style="width: 40px;"></div>
+
+        <button class="settings-toggle" id="btn-open-finance-settings" aria-label="Cài đặt tài chính">
+            ⚙
+        </button>
     </header>
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -28,17 +37,25 @@
 
         <ul class="sidebar-menu">
             <li class="menu-item active" data-target="view-finance" data-title="Tài chính">
-                <svg viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"></path><path d="M21 12H15v-2h6v2z"></path></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"></path>
+                    <path d="M21 12H15v-2h6v2z"></path>
+                </svg>
                 <span>Tài chính</span>
             </li>
 
             <li class="menu-item" data-target="view-task" data-title="Công việc">
-                <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <svg viewBox="0 0 24 24">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
                 <span>Công việc</span>
             </li>
 
             <li class="menu-item" data-target="view-nutrition" data-title="Dinh dưỡng">
-                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                <svg viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
                 <span>Coming soon</span>
             </li>
         </ul>
@@ -47,6 +64,78 @@
             <span>© 2026 Trương Trần Anh Phúc</span>
         </div>
     </nav>
+
+    <!-- Finance Settings Panel -->
+    <section class="finance-settings-panel" id="finance-settings-panel">
+        <div class="finance-settings-header">
+            <button class="finance-settings-back" id="btn-close-finance-settings">
+                ←
+            </button>
+            <div>
+                <h2>Cài đặt tài chính</h2>
+                <p>Quản lý danh mục, pool, tỷ giá và hũ tiết kiệm</p>
+            </div>
+        </div>
+
+        <div class="finance-settings-content">
+
+            <div class="finance-settings-card" data-settings-section="expense-category">
+                <div class="settings-card-main">
+                    <h3>Danh mục chi</h3>
+                    <p>Thêm, sửa, xóa mềm và đổi pool cho danh mục chi tiêu.</p>
+                </div>
+                <div class="settings-card-side">
+                    <strong id="ui-settings-expense-count">0</strong>
+                    <span>mục</span>
+                </div>
+            </div>
+
+            <div class="finance-settings-card" data-settings-section="income-category">
+                <div class="settings-card-main">
+                    <h3>Danh mục thu</h3>
+                    <p>Quản lý các nguồn thu như lương, phụ cấp, thu nhập khác.</p>
+                </div>
+                <div class="settings-card-side">
+                    <strong id="ui-settings-income-count">0</strong>
+                    <span>mục</span>
+                </div>
+            </div>
+
+            <div class="finance-settings-card" data-settings-section="pool">
+                <div class="settings-card-main">
+                    <h3>Pool & tỷ lệ</h3>
+                    <p>Chỉnh tên pool và tỷ lệ phân bổ ngân sách hằng tháng.</p>
+                </div>
+                <div class="settings-card-side">
+                    <strong id="ui-settings-pool-total">100%</strong>
+                    <span>tổng</span>
+                </div>
+            </div>
+
+            <div class="finance-settings-card" data-settings-section="exchange-rate">
+                <div class="settings-card-main">
+                    <h3>Tỷ giá AUD/VND</h3>
+                    <p>Cập nhật tỷ giá dùng để đổi SAFE-TO-SPEND sang VNĐ.</p>
+                </div>
+                <div class="settings-card-side">
+                    <strong id="ui-settings-exchange-rate">0</strong>
+                    <span>AUD/VND</span>
+                </div>
+            </div>
+
+            <div class="finance-settings-card" data-settings-section="vnd-fund">
+                <div class="settings-card-main">
+                    <h3>Hũ tiết kiệm</h3>
+                    <p>Cấu hình số tiền nhận mỗi kỳ, ngày nhận, chu kỳ và tự động cộng.</p>
+                </div>
+                <div class="settings-card-side">
+                    <strong id="ui-settings-vnd-auto">Tắt</strong>
+                    <span>tự động</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
     <main class="spa-container">
 
@@ -90,10 +179,10 @@
                 </section>
 
                 <section class="pools-section">
-                                    <h2 class="section-title">Ngân quỹ tháng này</h2>
-                                    <div id="ui-pools-container" class="pools-grid">
-                                        <p style="text-align:center; color:#8e8e93;">Đang đồng bộ dữ liệu...</p>
-                                    </div>
+                    <h2 class="section-title">Ngân quỹ tháng này</h2>
+                    <div id="ui-pools-container" class="pools-grid">
+                        <p style="text-align:center; color:#8e8e93;">Đang đồng bộ dữ liệu...</p>
+                    </div>
                 </section>
 
                 <section class="tuition-section finance-extra-section">
@@ -159,11 +248,13 @@
                     </div>
                 </section>
 
-                
             </div>
 
             <button class="fab-button" id="btn-open-modal">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
             </button>
         </div>
 
@@ -356,8 +447,6 @@
         <button type="button" class="btn-danger" id="btn-delete-plan">Xóa khoản này</button>
     </div>
 
-
-
     <!-- Bottom Sheet: Đóng học phí -->
     <div class="bottom-sheet" id="ui-tuition-payment-sheet">
         <div class="sheet-header">
@@ -469,6 +558,113 @@
         </div>
     </div>
 
+    <!-- Finance Settings: Danh mục chi -->
+    <div class="bottom-sheet" id="ui-finance-expense-settings-sheet">
+        <div class="sheet-header">
+            <h3>Danh mục chi</h3>
+            <button class="btn-close" id="btn-close-expense-settings">Xong</button>
+        </div>
+
+        <div class="settings-sheet-actions">
+            <button class="btn-submit" id="btn-add-expense-category">+ Thêm danh mục chi</button>
+        </div>
+
+        <div id="ui-expense-category-settings-list" class="settings-list">
+            <p style="text-align:center; color:#8e8e93;">Chưa có danh mục chi.</p>
+        </div>
+    </div>
+
+    <!-- Finance Settings: Danh mục thu -->
+    <div class="bottom-sheet" id="ui-finance-income-settings-sheet">
+        <div class="sheet-header">
+            <h3>Danh mục thu</h3>
+            <button class="btn-close" id="btn-close-income-settings">Xong</button>
+        </div>
+
+        <div class="settings-sheet-actions">
+            <button class="btn-submit" id="btn-add-income-category">+ Thêm danh mục thu</button>
+        </div>
+
+        <div id="ui-income-category-settings-list" class="settings-list">
+            <p style="text-align:center; color:#8e8e93;">Chưa có danh mục thu.</p>
+        </div>
+    </div>
+
+    <!-- Finance Settings: Form danh mục -->
+    <div class="bottom-sheet" id="ui-finance-category-form-sheet">
+        <div class="sheet-header">
+            <h3 id="finance-category-form-title">Danh mục</h3>
+            <button class="btn-close" id="btn-close-category-form">Xong</button>
+        </div>
+
+        <form id="finance-category-form" class="form-container">
+            <input type="hidden" id="input-finance-category-mode">
+            <input type="hidden" id="input-finance-category-type">
+            <input type="hidden" id="input-finance-category-id">
+
+            <div class="input-group">
+                <label>Tên danh mục</label>
+                <input type="text" id="input-finance-category-name" placeholder="VD: Ăn uống" required>
+            </div>
+
+            <div class="input-group" id="finance-category-pool-wrapper">
+                <label>Pool</label>
+                <select id="input-finance-category-pool"></select>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-finance-category">
+                Lưu danh mục
+            </button>
+
+            <button type="button" class="btn-danger" id="btn-delete-finance-category" style="display:none;">
+                Xóa danh mục
+            </button>
+        </form>
+    </div>
+
+    <!-- Finance Settings: Pool & tỷ lệ -->
+    <div class="bottom-sheet" id="ui-finance-pool-settings-sheet">
+        <div class="sheet-header">
+            <h3>Pool & tỷ lệ</h3>
+            <button class="btn-close" id="btn-close-pool-settings">Xong</button>
+        </div>
+
+        <form id="finance-pool-form" class="form-container">
+            <div id="ui-pool-settings-list" class="settings-list">
+                <p style="text-align:center; color:#8e8e93;">Đang tải Pool...</p>
+            </div>
+
+            <div class="settings-total-row">
+                <span>Tổng tỷ lệ</span>
+                <strong id="ui-pool-allocation-total">0%</strong>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-pool-settings">
+                Lưu tỷ lệ Pool
+            </button>
+        </form>
+    </div>
+
+    <!-- Finance Settings: Tỷ giá -->
+    <div class="bottom-sheet" id="ui-finance-exchange-settings-sheet">
+        <div class="sheet-header">
+            <h3>Tỷ giá AUD/VND</h3>
+            <button class="btn-close" id="btn-close-exchange-settings">Xong</button>
+        </div>
+
+        <form id="finance-exchange-form" class="form-container">
+            <div class="input-group">
+                <label>Tỷ giá hiện tại</label>
+                <input type="number" id="input-finance-exchange-rate" inputmode="decimal" placeholder="19000" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-exchange-settings">
+                Lưu tỷ giá
+            </button>
+        </form>
+    </div>
+
     <script src="app.js"></script>
+    <script src="finance-settings.js"></script>
 </body>
 </html>

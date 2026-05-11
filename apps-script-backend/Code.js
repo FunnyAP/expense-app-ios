@@ -27,6 +27,19 @@ function doGet(e) {
       });
     }
 
+    // Dùng cho trường hợp sau này muốn gọi riêng dữ liệu cài đặt tài chính
+    // Hiện tại vẫn trả cùng bộ dữ liệu financeGetData để frontend dùng chung appData.raw.settings
+    if (action === "finance.settings.getData") {
+      const data = financeGetData();
+
+      return jsonSuccess({
+        app: APP_NAME,
+        module: "finance",
+        settingsModule: true,
+        ...data
+      });
+    }
+
     if (action === "core.runDailyJobs") {
       const result = runDailyJobs({ force: true });
       return jsonSuccess(result, "core.runDailyJobs thành công");
@@ -51,6 +64,10 @@ function doPost(e) {
     let result;
 
     switch (action) {
+      // ================================
+      // FINANCE CORE ACTIONS
+      // ================================
+
       case "finance.addTransaction":
       case "addTransaction":
         result = financeAddTransaction(body);
@@ -81,10 +98,18 @@ function doPost(e) {
         result = financeConfirmPlan(body);
         break;
 
+      // ================================
+      // FINANCE TUITION ACTIONS
+      // ================================
+
       case "finance.addTuitionPayment":
       case "addTuitionPayment":
         result = financeAddTuitionPayment(body);
         break;
+
+      // ================================
+      // FINANCE VND FUND ACTIONS
+      // ================================
 
       case "finance.updateVndFundConfig":
       case "updateVndFundConfig":
@@ -95,6 +120,67 @@ function doPost(e) {
       case "addVndFundManualDeposit":
         result = financeAddVndFundManualDeposit(body);
         break;
+
+      // ================================
+      // FINANCE SETTINGS - EXPENSE CATEGORY
+      // Cài đặt riêng cho module Tài chính
+      // ================================
+
+      case "finance.settings.addExpenseCategory":
+        result = financeSettingsAddExpenseCategory(body);
+        break;
+
+      case "finance.settings.updateExpenseCategory":
+        result = financeSettingsUpdateExpenseCategory(body);
+        break;
+
+      case "finance.settings.deleteExpenseCategory":
+        result = financeSettingsDeleteExpenseCategory(body);
+        break;
+
+      // ================================
+      // FINANCE SETTINGS - INCOME CATEGORY
+      // ================================
+
+      case "finance.settings.addIncomeCategory":
+        result = financeSettingsAddIncomeCategory(body);
+        break;
+
+      case "finance.settings.updateIncomeCategory":
+        result = financeSettingsUpdateIncomeCategory(body);
+        break;
+
+      case "finance.settings.deleteIncomeCategory":
+        result = financeSettingsDeleteIncomeCategory(body);
+        break;
+
+      // ================================
+      // FINANCE SETTINGS - POOL
+      // ================================
+
+      case "finance.settings.updatePool":
+        result = financeSettingsUpdatePool(body);
+        break;
+
+      case "finance.settings.updatePoolAllocations":
+        result = financeSettingsUpdatePoolAllocations(body);
+        break;
+
+      // ================================
+      // FINANCE SETTINGS - CONFIG
+      // ================================
+
+      case "finance.settings.updateExchangeRate":
+        result = financeSettingsUpdateExchangeRate(body);
+        break;
+
+      case "finance.settings.updateVndFundConfig":
+        result = financeSettingsUpdateVndFundConfig(body);
+        break;
+
+      // ================================
+      // CORE SCHEDULER
+      // ================================
 
       case "finance.runDailyJobs":
       case "core.runDailyJobs":
