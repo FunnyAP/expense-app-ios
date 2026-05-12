@@ -604,23 +604,21 @@ function financeConfirmPlan(data) {
 }
 
 // ================================
-// 7. TUITION - Đóng học phí riêng
+// 7. TUITION - Học phí riêng
+// Học phí không còn là danh mục chi thường.
+// category_key = tuition chỉ là key nội bộ.
 // ================================
 
 function financeAddTuitionPayment(data) {
-  const amount = toNumber(data.amount);
+  const note = normalizeText(data.note || data.description || data.title || "Đã đóng học phí");
 
-  if (amount <= 0) {
-    throw new Error("Số tiền học phí phải lớn hơn 0.");
+  if (!data.transaction_date && !data.date) {
+    throw new Error("Ngày đóng học phí không được để trống.");
   }
 
-  const categoryInfo = ensureFinanceCategory({
-    type: TYPES.EXPENSE,
-    categoryKey: "tuition",
-    categoryName: "Học phí",
-    poolKey: "saving",
-    createIfMissing: true
-  });
+  if (!note) {
+    throw new Error("Nội dung đóng học phí không được để trống.");
+  }
 
   const transactionId = generateId("TX");
 
@@ -630,15 +628,15 @@ function financeAddTuitionPayment(data) {
     created_at: nowISO(),
     transaction_date: formatDateValue(data.transaction_date || data.date),
     type: TYPES.EXPENSE,
-    amount: amount,
-    currency: "AUD",
-    category_key: categoryInfo.category_key,
-    category_name: categoryInfo.category_name,
-    pool_key: categoryInfo.pool_key,
-    pool_name: categoryInfo.pool_name,
-    note: data.note || data.description || "Đóng học phí",
+    amount: toNumber(data.amount || 0),
+    currency: data.currency || "AUD",
+    category_key: "tuition",
+    category_name: "Học phí",
+    pool_key: "",
+    pool_name: "",
+    note: note,
     source: SOURCES.TUITION_PAYMENT,
-    ref_plan_id: "",
+    ref_plan_id: data.ref_plan_id || "",
     status: STATUS.ACTIVE,
     updated_at: nowISO()
   };
@@ -651,13 +649,269 @@ function financeAddTuitionPayment(data) {
     transactionId,
     null,
     transaction,
-    "Thêm khoản đóng học phí"
+    "Ghi nhận đã đóng học phí"
   );
 
   return {
     transaction: transaction,
     data: financeGetData()
   };
+}
+
+function financeAddTuitionDue(data) {
+  const title = normalizeText(data.title || data.name || "Hạn đóng học phí");
+
+  if (!title) {
+    throw new Error("Tên hạn đóng học phí không được để trống.");
+  }
+
+  if (!data.due_date && !data.date) {
+    throw new Error("Ngày hạn cuối đóng học phí không được để trống.");
+  }
+
+  const planId = generateId("PL");
+  const dueDate = formatDateValue(data.due_date || data.date);
+
+  const plan = {
+    plan_id: planId,
+    module: "finance",
+    title: title,
+    type: TYPES.EXPENSE,
+    amount: toNumber(data.amount || 0),
+    currency: data.currency || "AUD",
+    category_key: "tuition",
+    category_name: "Học phí",
+    pool_key: "",
+    pool_name: "",
+    due_date: dueDate,
+    days_left: "",
+    status: STATUS.ACTIVE,
+    is_recurring: false,
+    repeat_type: "none",
+    cycle_days: 0,
+    priority: data.priority || "normal",
+    auto_create_transaction: false,
+    last_confirmed_at: "",
+    next_due_date: "",
+    note: data.note || "",
+    created_at: nowISO(),
+    updated_at: nowISO()
+  };
+
+  appendObjectRow(SHEETS.FINANCE_PLANS, plan);
+
+  writeAuditLog(
+    "finance.add_tuition_due",
+    SHEETS.FINANCE_PLANS,
+    planId,
+    null,
+    plan,
+    "Thêm lịch nhắc hạn đóng học phí"
+  );
+
+  return {
+    plan: plan,
+    data: financeGetData()
+  };
+}
+
+function financeUpdateTuitionDue(data) {
+  const planId = data.plan_id;
+
+  if (!planId) {
+    throw new Error("Thiếu plan_id của hạn đóng học phí.");
+  }
+
+  const plans = getSheetRows(SHEETS.FINANCE_PLANS);
+  const oldPlan = plans.find(plan => String(plan.plan_id) === String(planId));
+
+  if (!oldPlan) {
+    throw new Error("Không tìm thấy hạn đóng học phí cần sửa.");
+  }
+
+  if (!isTuitionPlanLike(oldPlan)) {
+    throw new Error("Plan này không phải hạn đóng học phí.");
+  }
+
+  const updateData = {
+    updated_at: nowISO(),
+    category_key: "tuition",
+    category_name: "Học phí",
+    pool_key: "",
+    pool_name: "",
+    amount: toNumber(data.amount || oldPlan.amount || 0),
+    currency: data.currency || oldPlan.currency || "AUD",
+    type: TYPES.EXPENSE
+  };
+
+  if (data.title !== undefined || data.name !== undefined) {
+    const title = normalizeText(data.title || data.name);
+    if (!title) {
+      throw new Error("Tên hạn đóng học phí không được để trống.");
+    }
+
+    updateData.title = title;
+  }
+
+  if (data.due_date !== undefined || data.date !== undefined) {
+    updateData.due_date = formatDateValue(data.due_date || data.date);
+  }
+
+  if (data.note !== undefined) {
+    updateData.note = data.note || "";
+  }
+
+  if (data.priority !== undefined) {
+    updateData.priority = data.priority || "normal";
+  }
+
+  updateRowById(
+    SHEETS.FINANCE_PLANS,
+    "plan_id",
+    planId,
+    updateData
+  );
+
+  writeAuditLog(
+    "finance.update_tuition_due",
+    SHEETS.FINANCE_PLANS,
+    planId,
+    oldPlan,
+    updateData,
+    "Sửa lịch nhắc hạn đóng học phí"
+  );
+
+  return {
+    plan_id: planId,
+    updated: updateData,
+    data: financeGetData()
+  };
+}
+
+function financeDeleteTuitionDue(data) {
+  const planId = data.plan_id;
+
+  if (!planId) {
+    throw new Error("Thiếu plan_id của hạn đóng học phí.");
+  }
+
+  const plans = getSheetRows(SHEETS.FINANCE_PLANS);
+  const oldPlan = plans.find(plan => String(plan.plan_id) === String(planId));
+
+  if (!oldPlan) {
+    throw new Error("Không tìm thấy hạn đóng học phí cần xóa.");
+  }
+
+  if (!isTuitionPlanLike(oldPlan)) {
+    throw new Error("Plan này không phải hạn đóng học phí.");
+  }
+
+  const updateData = {
+    status: STATUS.DELETED,
+    updated_at: nowISO()
+  };
+
+  updateRowById(
+    SHEETS.FINANCE_PLANS,
+    "plan_id",
+    planId,
+    updateData
+  );
+
+  writeAuditLog(
+    "finance.delete_tuition_due",
+    SHEETS.FINANCE_PLANS,
+    planId,
+    oldPlan,
+    updateData,
+    "Xóa mềm lịch nhắc hạn đóng học phí"
+  );
+
+  return {
+    plan_id: planId,
+    deleted: true,
+    data: financeGetData()
+  };
+}
+
+function financeCompleteTuitionDue(data) {
+  const planId = data.plan_id;
+
+  if (!planId) {
+    throw new Error("Thiếu plan_id của hạn đóng học phí.");
+  }
+
+  const plans = getSheetRows(SHEETS.FINANCE_PLANS);
+  const plan = plans.find(row => String(row.plan_id) === String(planId));
+
+  if (!plan) {
+    throw new Error("Không tìm thấy hạn đóng học phí.");
+  }
+
+  if (!isTuitionPlanLike(plan)) {
+    throw new Error("Plan này không phải hạn đóng học phí.");
+  }
+
+  if (String(plan.status || "").toLowerCase() === STATUS.DELETED) {
+    throw new Error("Hạn đóng học phí này đã bị xóa.");
+  }
+
+  const transactionNote = normalizeText(
+    data.note ||
+    data.description ||
+    `Đã đóng: ${plan.title || "Học phí"}`
+  );
+
+  const transactionResult = financeAddTuitionPayment({
+    transaction_date: data.transaction_date || data.date || nowISO(),
+    note: transactionNote,
+    amount: data.amount || 0,
+    currency: data.currency || "AUD",
+    ref_plan_id: planId
+  });
+
+  const planUpdate = {
+    status: STATUS.DONE,
+    last_confirmed_at: nowISO(),
+    updated_at: nowISO()
+  };
+
+  updateRowById(
+    SHEETS.FINANCE_PLANS,
+    "plan_id",
+    planId,
+    planUpdate
+  );
+
+  writeAuditLog(
+    "finance.complete_tuition_due",
+    SHEETS.FINANCE_PLANS,
+    planId,
+    plan,
+    {
+      transaction: transactionResult.transaction,
+      planUpdate: planUpdate
+    },
+    "Xác nhận đã đóng học phí và hoàn tất lịch nhắc"
+  );
+
+  return {
+    transaction: transactionResult.transaction,
+    planUpdate: planUpdate,
+    data: financeGetData()
+  };
+}
+
+function isTuitionPlanLike(plan) {
+  const categoryKey = String(plan.category_key || "").toLowerCase();
+  const categoryName = String(plan.category_name || "").toLowerCase();
+  const title = String(plan.title || "").toLowerCase();
+
+  return categoryKey === "tuition" ||
+    categoryName.includes("học phí") ||
+    categoryName.includes("tuition") ||
+    title.includes("học phí") ||
+    title.includes("tuition");
 }
 
 // ================================

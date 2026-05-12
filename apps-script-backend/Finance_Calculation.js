@@ -24,10 +24,16 @@ function calculateFinanceData(transactions, plans, settings) {
 
   const operationalTransactions = activeTransactions.filter(isOperationalFinanceTransaction);
 
+  // Học phí là nghiệp vụ riêng:
+  // - Plan học phí không hiện trong Timeline chung
+  // - Transaction học phí không tính vào SAFE-TO-SPEND / Pool
+  const operationalPlans = activePlans.filter(plan => !isTuitionPlan(plan));
+  const tuitionPlans = activePlans.filter(isTuitionPlan);
+
   const pools = buildPoolSummary(operationalTransactions, activeSettings, exchangeRate);
   const totals = calculateTransactionTotals(operationalTransactions, exchangeRate);
-  const upcoming = buildUpcomingPlans(activePlans);
-  const tuition = calculateTuitionSummary(activeTransactions, activeSettings, exchangeRate);
+  const upcoming = buildUpcomingPlans(operationalPlans);
+  const tuition = calculateTuitionSummary(activeTransactions, tuitionPlans, activeSettings, exchangeRate);
   const vndFund = calculateVndFundSummary(activeTransactions, activeSettings);
 
   const safeToSpend = totals.totalIncomeAud - totals.totalExpenseAud;
@@ -50,6 +56,11 @@ function calculateFinanceData(transactions, plans, settings) {
   };
 }
 
+// ================================
+// OPERATIONAL TRANSACTIONS
+// Chỉ các giao dịch sinh hoạt thật mới tính vào SAFE-TO-SPEND / Pool
+// ================================
+
 function isOperationalFinanceTransaction(tx) {
   const source = String(tx.source || SOURCES.MANUAL).toLowerCase();
   const currency = String(tx.currency || "AUD").toUpperCase();
@@ -62,6 +73,9 @@ function isOperationalFinanceTransaction(tx) {
 
   if (specialSources.includes(source)) return false;
   if (currency === "VND") return false;
+
+  // Chặn thêm một lớp: nếu là học phí thì không tính vào thu chi sinh hoạt
+  if (isTuitionTransaction(tx)) return false;
 
   return true;
 }
@@ -88,6 +102,10 @@ function calculateTransactionTotals(transactions, exchangeRate) {
     totalExpenseAud: totalExpenseAud
   };
 }
+
+// ================================
+// POOL SUMMARY
+// ================================
 
 function buildPoolSummary(transactions, settings, exchangeRate) {
   const pools = getPoolSettings(settings);
@@ -159,10 +177,109 @@ function buildPoolNotice(poolName, spent, remaining) {
   return "";
 }
 
+// ================================
+// UPCOMING PLANS
+// Khoản sắp tới chung, KHÔNG bao gồm học phí
+// ================================
+
 function buildUpcomingPlans(plans) {
   const today = toDateOnly(new Date());
 
   const items = plans
+    .filter(plan => {
+      const status = String(plan.status || STATUS.ACTIVE).toLowerCase();
+      return (status === STATUS.ACTIVE || status === "") && !isTuitionPlan(plan);
+    })
+    .map(plan => buildPlanClientItem(plan, today))
+    .sort(sortPlanByDaysLeft);
+
+  return {
+    nearest: items.length > 0 ? items[0] : null,
+    items: items
+  };
+}
+
+function buildPlanClientItem(plan, today) {
+  const dueDate = toDateOnly(plan.due_date);
+  const daysLeft = dueDate ? calculateDaysLeft(today, dueDate) : null;
+
+  return {
+    plan_id: plan.plan_id,
+    title: plan.title,
+    type: normalizeTypeValue(plan.type),
+    amount: toNumber(plan.amount),
+    currency: plan.currency || "AUD",
+    category_key: plan.category_key,
+    category_name: plan.category_name,
+    pool_key: plan.pool_key,
+    pool_name: plan.pool_name,
+    due_date: formatDateForClient(dueDate),
+    days_left: daysLeft,
+    status: plan.status || STATUS.ACTIVE,
+    is_recurring: parseBoolean(plan.is_recurring),
+    repeat_type: plan.repeat_type || "none",
+    cycle_days: toNumber(plan.cycle_days),
+    priority: plan.priority || "normal",
+    note: plan.note || ""
+  };
+}
+
+function sortPlanByDaysLeft(a, b) {
+  if (a.days_left === null) return 1;
+  if (b.days_left === null) return -1;
+  return a.days_left - b.days_left;
+}
+
+// ================================
+// TUITION SUMMARY
+// Học phí bây giờ = lịch sử đã đóng + hạn đóng kế tiếp
+// Không còn là quỹ tổng tiền / mục tiêu / còn lại
+// ================================
+
+function calculateTuitionSummary(transactions, tuitionPlans, settings, exchangeRate) {
+  const history = transactions
+    .filter(isTuitionTransaction)
+    .map(tx => {
+      const dateValue = formatDateValue(tx.transaction_date || tx.created_at);
+
+      return {
+        transaction_id: tx.transaction_id,
+        date: dateValue,
+        transaction_date: dateValue,
+        note: tx.note || "Đã đóng học phí",
+        source: tx.source || SOURCES.TUITION_PAYMENT,
+
+        // Giữ amount/currency để không làm vỡ frontend cũ.
+        // UI mới sẽ không render số tiền này nữa.
+        amount: toNumber(tx.amount || 0),
+        currency: tx.currency || "AUD"
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const dueData = buildTuitionDueSummary(tuitionPlans);
+
+  return {
+    // Giữ các field cũ để tránh lỗi nếu frontend cũ còn đọc.
+    target: 0,
+    paid: 0,
+    remaining: 0,
+    percent: 0,
+
+    currency: "AUD",
+
+    // Field mới cho nghiệp vụ học phí.
+    history: history,
+    due: dueData.nearest,
+    dues: dueData.items,
+    nearestDue: dueData.nearest
+  };
+}
+
+function buildTuitionDueSummary(tuitionPlans) {
+  const today = toDateOnly(new Date());
+
+  const items = tuitionPlans
     .filter(plan => {
       const status = String(plan.status || STATUS.ACTIVE).toLowerCase();
       return status === STATUS.ACTIVE || status === "";
@@ -173,14 +290,14 @@ function buildUpcomingPlans(plans) {
 
       return {
         plan_id: plan.plan_id,
-        title: plan.title,
-        type: normalizeTypeValue(plan.type),
-        amount: toNumber(plan.amount),
+        title: plan.title || "Hạn đóng học phí",
+        type: normalizeTypeValue(plan.type || TYPES.EXPENSE),
+        amount: toNumber(plan.amount || 0),
         currency: plan.currency || "AUD",
-        category_key: plan.category_key,
-        category_name: plan.category_name,
-        pool_key: plan.pool_key,
-        pool_name: plan.pool_name,
+        category_key: plan.category_key || "tuition",
+        category_name: plan.category_name || "Học phí",
+        pool_key: plan.pool_key || "",
+        pool_name: plan.pool_name || "",
         due_date: formatDateForClient(dueDate),
         days_left: daysLeft,
         status: plan.status || STATUS.ACTIVE,
@@ -191,50 +308,11 @@ function buildUpcomingPlans(plans) {
         note: plan.note || ""
       };
     })
-    .sort((a, b) => {
-      if (a.days_left === null) return 1;
-      if (b.days_left === null) return -1;
-      return a.days_left - b.days_left;
-    });
+    .sort(sortPlanByDaysLeft);
 
   return {
     nearest: items.length > 0 ? items[0] : null,
     items: items
-  };
-}
-
-function calculateTuitionSummary(transactions, settings, exchangeRate) {
-  const target = getConfigNumber(settings, [
-    "tuition_target_amount",
-    "CFG_TUITION_TARGET"
-  ], 0);
-
-  const history = transactions
-    .filter(isTuitionTransaction)
-    .map(tx => {
-      const amountAud = convertToAud(tx.amount, tx.currency || "AUD", exchangeRate);
-
-      return {
-        transaction_id: tx.transaction_id,
-        date: formatDateValue(tx.transaction_date || tx.created_at),
-        amount: roundMoney(amountAud),
-        currency: "AUD",
-        note: tx.note || ""
-      };
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  const paid = history.reduce((sum, item) => sum + toNumber(item.amount), 0);
-  const remaining = target - paid;
-  const percent = target > 0 ? Math.round((paid / target) * 100) : 0;
-
-  return {
-    target: roundMoney(target),
-    paid: roundMoney(paid),
-    remaining: roundMoney(remaining),
-    percent: percent,
-    currency: "AUD",
-    history: history
   };
 }
 
@@ -248,6 +326,24 @@ function isTuitionTransaction(tx) {
     categoryName.includes("học phí") ||
     categoryName.includes("tuition");
 }
+
+function isTuitionPlan(plan) {
+  const source = String(plan.source || "").toLowerCase();
+  const categoryKey = String(plan.category_key || "").toLowerCase();
+  const categoryName = String(plan.category_name || "").toLowerCase();
+  const title = String(plan.title || "").toLowerCase();
+
+  return source === "tuition_due" ||
+    categoryKey === "tuition" ||
+    categoryName.includes("học phí") ||
+    categoryName.includes("tuition") ||
+    title.includes("học phí") ||
+    title.includes("tuition");
+}
+
+// ================================
+// VND FUND SUMMARY
+// ================================
 
 function calculateVndFundSummary(transactions, settings) {
   const balance = getConfigNumber(settings, [
@@ -307,6 +403,10 @@ function isVndFundTransaction(tx) {
     categoryKey === "vnd_fund" ||
     categoryKey === "vnd_saving";
 }
+
+// ================================
+// SETTINGS / CONFIG HELPERS
+// ================================
 
 function getPoolSettings(settings) {
   const pools = settings

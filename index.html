@@ -185,25 +185,55 @@
                     </div>
                 </section>
 
+                <!-- Học phí: lịch nhắc hạn đóng + lịch sử ngày/nội dung -->
                 <section class="tuition-section finance-extra-section">
                     <div class="section-header-row">
                         <h2 class="section-title">Học phí</h2>
-                        <button class="small-action-button" id="btn-open-tuition-payment">+ Đóng</button>
+                        <button class="small-action-button" id="btn-open-tuition-due">+ Lịch</button>
                     </div>
 
-                    <div class="finance-summary-card clean-tuition-card" id="ui-tuition-card">
-                        <div class="summary-top-row">
+                    <div class="finance-summary-card tuition-reminder-card" id="ui-tuition-card">
+                        <div class="tuition-due-header">
                             <div>
-                                <p class="summary-label">Tổng đã đóng</p>
-                                <h3 id="ui-tuition-paid">$0</h3>
+                                <p class="summary-label">Hạn đóng kế tiếp</p>
+                                <h3 id="ui-tuition-due-title">Chưa có hạn đóng học phí</h3>
                             </div>
-
                             <span class="summary-pill-blue">AUD</span>
                         </div>
 
-                        <button type="button" class="btn-card-secondary" id="btn-open-tuition-history">
-                            Lịch sử đóng
-                        </button>
+                        <div class="tuition-due-body" id="ui-tuition-due-body">
+                            <div class="tuition-countdown-box">
+                                <strong id="ui-tuition-due-days">--</strong>
+                                <span id="ui-tuition-due-status">Chưa đặt lịch</span>
+                            </div>
+
+                            <div class="tuition-due-info">
+                                <span>Hạn cuối</span>
+                                <strong id="ui-tuition-due-date">Chưa có ngày</strong>
+                            </div>
+
+                            <p class="tuition-due-note" id="ui-tuition-due-note">
+                                Bấm + Lịch để tạo lịch nhắc hạn đóng học phí.
+                            </p>
+                        </div>
+
+                        <div class="card-actions-row two-buttons tuition-due-actions">
+                            <button type="button" class="btn-card-secondary" id="btn-complete-tuition-due">
+                                Đã đóng
+                            </button>
+                            <button type="button" class="btn-card-secondary" id="btn-edit-tuition-due">
+                                Sửa lịch
+                            </button>
+                        </div>
+
+                        <div class="card-actions-row two-buttons">
+                            <button type="button" class="btn-card-secondary" id="btn-open-tuition-payment">
+                                Ghi nhận đã đóng
+                            </button>
+                            <button type="button" class="btn-card-secondary" id="btn-open-tuition-history">
+                                Lịch sử đóng
+                            </button>
+                        </div>
                     </div>
                 </section>
 
@@ -447,29 +477,63 @@
         <button type="button" class="btn-danger" id="btn-delete-plan">Xóa khoản này</button>
     </div>
 
-    <!-- Bottom Sheet: Đóng học phí -->
+    <!-- Bottom Sheet: Ghi nhận đã đóng học phí -->
     <div class="bottom-sheet" id="ui-tuition-payment-sheet">
         <div class="sheet-header">
-            <h3>Đóng học phí</h3>
+            <h3>Ghi nhận đã đóng</h3>
             <button class="btn-close" id="btn-close-tuition-payment">Xong</button>
         </div>
 
         <form id="tuition-payment-form" class="form-container">
-            <div class="input-group input-amount">
-                <span class="currency-symbol">$</span>
-                <input type="number" id="input-tuition-amount" inputmode="decimal" placeholder="0" required>
-            </div>
+            <input type="hidden" id="input-tuition-amount" value="0">
+            <input type="hidden" id="input-tuition-ref-plan-id" value="">
 
             <div class="input-group">
-                <label>Ngày đóng</label>
+                <label>Ngày đã đóng</label>
                 <input type="date" id="input-tuition-date" required>
             </div>
 
             <div class="input-group">
-                <input type="text" id="input-tuition-note" placeholder="Nội dung / kỳ học / ghi chú">
+                <label>Nội dung</label>
+                <input type="text" id="input-tuition-note" placeholder="VD: Đã đóng học phí kỳ 1" required>
             </div>
 
-            <button type="submit" class="btn-submit" id="btn-submit-tuition-payment">Lưu khoản học phí</button>
+            <button type="submit" class="btn-submit" id="btn-submit-tuition-payment">Lưu lịch sử học phí</button>
+        </form>
+    </div>
+
+    <!-- Bottom Sheet: Lịch nhắc hạn đóng học phí -->
+    <div class="bottom-sheet" id="ui-tuition-due-sheet">
+        <div class="sheet-header">
+            <h3 id="tuition-due-sheet-title">Lịch nhắc học phí</h3>
+            <button class="btn-close" id="btn-close-tuition-due">Xong</button>
+        </div>
+
+        <form id="tuition-due-form" class="form-container">
+            <input type="hidden" id="input-tuition-due-id" value="">
+
+            <div class="input-group">
+                <label>Tên hạn đóng</label>
+                <input type="text" id="input-tuition-due-title" placeholder="VD: Học phí kỳ 2" required>
+            </div>
+
+            <div class="input-group">
+                <label>Ngày hạn cuối</label>
+                <input type="date" id="input-tuition-due-date" required>
+            </div>
+
+            <div class="input-group">
+                <label>Ghi chú</label>
+                <input type="text" id="input-tuition-due-note" placeholder="VD: Đóng trước hạn để tránh bị trễ">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit-tuition-due">
+                Lưu lịch nhắc
+            </button>
+
+            <button type="button" class="btn-danger" id="btn-delete-tuition-due" style="display:none;">
+                Xóa lịch nhắc
+            </button>
         </form>
     </div>
 

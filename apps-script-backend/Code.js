@@ -27,8 +27,8 @@ function doGet(e) {
       });
     }
 
-    // Dùng cho trường hợp sau này muốn gọi riêng dữ liệu cài đặt tài chính
-    // Hiện tại vẫn trả cùng bộ dữ liệu financeGetData để frontend dùng chung appData.raw.settings
+    // Dùng cho trường hợp sau này muốn gọi riêng dữ liệu cài đặt tài chính.
+    // Hiện tại vẫn trả cùng bộ dữ liệu financeGetData để frontend dùng chung appData.raw.settings.
     if (action === "finance.settings.getData") {
       const data = financeGetData();
 
@@ -100,11 +100,34 @@ function doPost(e) {
 
       // ================================
       // FINANCE TUITION ACTIONS
+      // Học phí là nghiệp vụ riêng:
+      // - Ghi nhận đã đóng học phí
+      // - Tạo/sửa/xóa/hoàn tất lịch nhắc hạn đóng học phí
       // ================================
 
       case "finance.addTuitionPayment":
       case "addTuitionPayment":
         result = financeAddTuitionPayment(body);
+        break;
+
+      case "finance.addTuitionDue":
+      case "addTuitionDue":
+        result = financeAddTuitionDue(body);
+        break;
+
+      case "finance.updateTuitionDue":
+      case "updateTuitionDue":
+        result = financeUpdateTuitionDue(body);
+        break;
+
+      case "finance.deleteTuitionDue":
+      case "deleteTuitionDue":
+        result = financeDeleteTuitionDue(body);
+        break;
+
+      case "finance.completeTuitionDue":
+      case "completeTuitionDue":
+        result = financeCompleteTuitionDue(body);
         break;
 
       // ================================

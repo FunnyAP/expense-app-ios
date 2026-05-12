@@ -27,7 +27,7 @@ body {
 
 .app-container {
     padding: 20px;
-    padding-bottom: 100px;
+    padding-bottom: 130px;
 }
 
 /* Header Safe To Spend */
@@ -79,8 +79,15 @@ body {
     opacity: 0.6;
 }
 
-.box-rent { background-color: rgba(255, 59, 48, 0.1); color: var(--red); }
-.box-salary { background-color: rgba(52, 199, 89, 0.1); color: var(--green); }
+.box-rent {
+    background-color: rgba(255, 59, 48, 0.1);
+    color: var(--red);
+}
+
+.box-salary {
+    background-color: rgba(52, 199, 89, 0.1);
+    color: var(--green);
+}
 
 /* Section chung */
 .section-title {
@@ -207,7 +214,11 @@ body {
     color: var(--red);
 }
 
-/* Lưới hiển thị 4 Pool */
+/* Lưới hiển thị Pool */
+.pools-section {
+    margin-bottom: 24px;
+}
+
 .pools-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -237,8 +248,15 @@ body {
     margin-bottom: 12px;
 }
 
-.pool-name { font-weight: 600; font-size: 16px; }
-.pool-amount { font-weight: 700; font-size: 16px; }
+.pool-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.pool-amount {
+    font-weight: 700;
+    font-size: 16px;
+}
 
 .pool-details {
     overflow: hidden;
@@ -308,12 +326,17 @@ body {
     transition: transform 0.2s;
 }
 
-.fab-button:active { transform: scale(0.9); }
+.fab-button:active {
+    transform: scale(0.9);
+}
 
 /* Bottom Sheet */
 .overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0,0,0,0.4);
     opacity: 0;
     pointer-events: none;
@@ -329,7 +352,8 @@ body {
 .bottom-sheet {
     position: fixed;
     bottom: -100%;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     background: var(--card-bg);
     border-radius: 20px 20px 0 0;
     padding: 20px;
@@ -376,7 +400,8 @@ body {
     white-space: nowrap;
 }
 
-.input-group input:not([type="radio"]), .input-group select {
+.input-group input:not([type="radio"]),
+.input-group select {
     text-align: right;
     border: none;
     font-size: 16px;
@@ -525,7 +550,10 @@ body {
 .ios-switch .slider {
     position: absolute;
     cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: #E5E5EA;
     transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
     border-radius: 30px;
@@ -689,14 +717,21 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ==========================================
-   TUITION & VND FUND SECTIONS
-   Dùng lại tinh thần iOS/card hiện tại
+   FINANCE EXTRA SECTIONS: TUITION / VND FUND
    ========================================== */
+
 .finance-extra-section {
     margin-bottom: 24px;
 }
@@ -708,46 +743,143 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.03);
 }
 
-.summary-card-top {
+.summary-card-top,
+.summary-top-row,
+.tuition-due-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
-    margin-bottom: 12px;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
 .summary-label {
     font-size: 13px;
-    color: var(--text-sub);
     font-weight: 700;
-    margin-bottom: 4px;
+    color: var(--text-sub);
+    margin-bottom: 6px;
 }
 
 .finance-summary-card h3 {
     font-size: 26px;
+    line-height: 1.1;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
 
 .summary-pill-blue,
 .summary-pill-green {
-    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 44px;
+    height: 28px;
+    padding: 0 10px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 800;
-    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .summary-pill-blue {
-    background: rgba(0, 122, 255, 0.1);
+    background: rgba(0, 122, 255, 0.12);
     color: var(--blue);
 }
 
 .summary-pill-green {
+    background: rgba(52, 199, 89, 0.14);
+    color: var(--green);
+}
+
+/* Học phí mới: hạn đóng + đếm ngược */
+.tuition-reminder-card {
+    padding: 16px;
+}
+
+.tuition-due-header h3 {
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.tuition-due-body {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 10px;
+}
+
+.tuition-countdown-box {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 16px 12px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.tuition-countdown-box strong {
+    display: block;
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--blue);
+}
+
+.tuition-countdown-box span {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+}
+
+.tuition-due-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.tuition-due-info span {
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.tuition-due-info strong {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 850;
+    text-align: right;
+}
+
+.tuition-due-note {
+    margin-top: 12px;
+    color: var(--text-sub);
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 600;
+}
+
+.tuition-due-actions {
+    margin-top: 14px;
+}
+
+.tuition-due-actions .btn-card-secondary:first-child {
     background: rgba(52, 199, 89, 0.12);
     color: var(--green);
 }
 
+.tuition-due-actions .btn-card-secondary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Progress / metadata cũ vẫn giữ để không làm hỏng phần khác */
 .summary-progress-bg {
     height: 8px;
     background: var(--bg-color);
@@ -762,8 +894,13 @@ body {
     transition: width 0.3s ease;
 }
 
-.blue-fill { background: var(--blue); }
-.green-fill { background: var(--green); }
+.blue-fill {
+    background: var(--blue);
+}
+
+.green-fill {
+    background: var(--green);
+}
 
 .summary-meta-row {
     display: flex;
@@ -819,9 +956,9 @@ body {
     border: none;
     background: rgba(0, 122, 255, 0.1);
     color: var(--blue);
-    padding: 12px;
+    padding: 14px 16px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
     cursor: pointer;
 }
@@ -830,6 +967,33 @@ body {
     opacity: 0.65;
 }
 
+/* Hũ tiết kiệm */
+.vnd-fund-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.vnd-fund-mini-card {
+    background: var(--bg-color);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.vnd-fund-mini-card p {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.vnd-fund-mini-card strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* Lịch sử */
 .history-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -874,6 +1038,7 @@ body {
     line-height: 1.4;
 }
 
+/* Responsive nhỏ */
 @media (max-width: 380px) {
     .summary-meta-row {
         flex-direction: column;
@@ -882,130 +1047,12 @@ body {
     .summary-meta-grid {
         grid-template-columns: 1fr;
     }
-}
 
+    .card-actions-row.two-buttons {
+        flex-direction: column;
+    }
 
-/* ==========================================
-   FINANCE EXTRA SECTIONS: TUITION / VND FUND
-   ========================================== */
-
-.finance-extra-section {
-    margin-bottom: 24px;
-}
-
-.finance-summary-card {
-    background: var(--card-bg);
-    border-radius: 18px;
-    padding: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-}
-
-.clean-tuition-card {
-    padding: 16px;
-}
-
-.summary-top-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
-}
-
-.summary-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-sub);
-    margin-bottom: 6px;
-}
-
-.finance-summary-card h3 {
-    font-size: 26px;
-    line-height: 1.1;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.summary-pill-blue {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-width: 44px;
-    height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    background: rgba(0, 122, 255, 0.12);
-    color: var(--blue);
-    font-size: 12px;
-    font-weight: 800;
-    flex-shrink: 0;
-}
-
-.summary-pill-green {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-width: 44px;
-    height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    background: rgba(52, 199, 89, 0.14);
-    color: var(--green);
-    font-size: 12px;
-    font-weight: 800;
-    flex-shrink: 0;
-}
-
-.btn-card-secondary {
-    width: 100%;
-    border: none;
-    background: rgba(0, 122, 255, 0.1);
-    color: var(--blue);
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.btn-card-secondary:active {
-    opacity: 0.65;
-}
-
-/* Nếu section Pool đưa lên trên thì tạo khoảng cách đẹp hơn */
-.pools-section {
-    margin-bottom: 24px;
-}
-
-/* Hũ tiết kiệm */
-.vnd-fund-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 14px;
-}
-
-.vnd-fund-mini-card {
-    background: var(--bg-color);
-    border-radius: 14px;
-    padding: 12px;
-}
-
-.vnd-fund-mini-card p {
-    font-size: 12px;
-    color: var(--text-sub);
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.vnd-fund-mini-card strong {
-    font-size: 14px;
-    font-weight: 800;
-}
-
-/* Tránh nút + che nội dung khi kéo xuống dưới */
-.app-container {
-    padding-bottom: 130px;
+    .tuition-countdown-box strong {
+        font-size: 30px;
+    }
 }
